@@ -21,7 +21,7 @@ O <strong>AlgoMaster</strong> nasceu de uma necessidade real: aprender algoritmo
 </p>
 
 <p align="justify">
-O ponto de partida é o <strong>Portugol</strong> — pseudocódigo em português usado amplamente no ensino brasileiro de lógica de programação, executável no <a href="https://visualg3.com.br">Visualg 3.0</a>. Antes de qualquer linguagem real, você aprende a <em>pensar como um computador</em>. Inspirado na metodologia do Prof. <strong>Gustavo Guanabara</strong> do <a href="https://cursoemvideo.com">Curso em Vídeo</a>.
+O ponto de partida é o <strong>Portugol</strong> — pseudocódigo em português usado amplamente no ensino brasileiro de lógica de programação, executável no <a href="https://www.clubedohardware.com.br/forums/topic/1639070">Visualg 3.0</a>. Antes de qualquer linguagem real, você aprende a <em>pensar como um computador</em>. Inspirado na metodologia do Prof. <strong>Gustavo Guanabara</strong> do <a href="https://cursoemvideo.com">Curso em Vídeo</a>.
 </p>
 
 > 💡 Todo o conteúdo — estrutura, código, textos, fluxogramas, exercícios e curadoria de referências — foi gerado em uma conversa iterativa com **Claude**, assistente de IA da [Anthropic](https://anthropic.com), e refinado a cada etapa.
