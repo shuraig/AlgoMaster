@@ -1,23 +1,23 @@
 <div align="center">
 
-# 📃 AlgoMaster
+# 📘 AlgoMaster
 
 **Guia completo para aprender e dominar algoritmos**
 
-[![Ver Site](https://img.shields.io/badge/🌐_Acessar_Site-00ff87?style=for-the-badge&logoColor=black)](https://shuraig.github.io/AlgoMaster/)
-![Status](https://img.shields.io/badge/status-online-00ff87?style=for-the-badge)
-[![Feito com IA](https://img.shields.io/badge/gerado_com-Claude_AI-b97cff?style=for-the-badge)](https://claude.ai)
+[![Ver Site](https://img.shields.io/badge/🌐_Acessar_Site-00ff87?style=for-the-badge&logoColor=black)](https://seuusuario.github.io/algoritmos-guide)
+![Status](https://img.shields.io/badge/status-online-brightgreen?style=for-the-badge)
+![IA](https://img.shields.io/badge/gerado_com-Claude_AI-b97cff?style=for-the-badge)
 
 </div>
 
 ---
 
 ## 🎯 Sobre o Projeto
-<p align="justify">
-Este site foi criado como <strong>material de estudo aberto</strong> para quem quer aprender algoritmos do zero ao avançado — e também como <strong>demonstração prática do uso de IA na programação</strong>.
 
-> 💡 Todo o conteúdo — estrutura, código, textos e curadoria de livros — foi gerado em uma única conversa com <strong>Claude</strong>, assistente de IA da [Anthropic](https://anthropic.com).
-</p>
+Este site foi criado como **material de estudo aberto** para quem quer aprender algoritmos do zero ao avançado — e também como **demonstração prática do uso de IA na programação**.
+
+> 💡 Todo o conteúdo — estrutura, código, textos e curadoria de livros — foi gerado em uma única conversa com **Claude**, assistente de IA da [Anthropic](https://anthropic.com).
+
 ---
 
 ## 📚 O que você vai encontrar
