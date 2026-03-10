@@ -1,0 +1,2093 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AlgoMaster — Algoritmos com Portugol</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --green: #00ff87;
+      --green-dim: #00cc6a;
+      --green-faint: rgba(0,255,135,0.06);
+      --bg: #080c0a;
+      --bg2: #0d1410;
+      --bg3: #111a14;
+      --border: rgba(0,255,135,0.15);
+      --text: #d4f0dc;
+      --text-dim: #7aab88;
+      --red: #ff4d6d;
+      --yellow: #ffd166;
+      --blue: #4cc9f0;
+      --purple: #b97cff;
+      --orange: #ff9f1c;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(8,12,10,0.94);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem; height: 58px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.15rem; color: var(--green); text-shadow: 0 0 20px var(--green); }
+    .nav-logo span { color: var(--text-dim); }
+    .nav-links { display: flex; gap: 1.4rem; list-style: none; }
+    .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 0.72rem; letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--green); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 7rem 2rem 4rem;
+      position: relative; overflow: hidden;
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 20%, transparent 100%);
+    }
+    .hero-glow {
+      position: absolute; width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(0,255,135,0.07) 0%, transparent 70%);
+      border-radius: 50%; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      animation: pulse 5s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.6} 50%{transform:translate(-50%,-50%) scale(1.08);opacity:1} }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      border: 1px solid var(--border); background: var(--green-faint);
+      padding: 0.3rem 1rem; border-radius: 100px;
+      font-size: 0.68rem; color: var(--green); letter-spacing: 2px; text-transform: uppercase;
+      margin-bottom: 2rem; animation: fadeDown 0.7s ease both;
+    }
+    .hero-badge::before { content:''; width:6px; height:6px; background:var(--green); border-radius:50%; box-shadow:0 0 8px var(--green); animation:blink 1.5s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+    .hero h1 { font-family:'Syne',sans-serif; font-size:clamp(2.4rem,7vw,5.5rem); font-weight:800; line-height:1.05; letter-spacing:-2px; margin-bottom:1.5rem; animation:fadeDown 0.7s 0.1s ease both; }
+    .hero h1 .accent  { color:var(--green);  text-shadow:0 0 40px var(--green); }
+    .hero h1 .accent2 { color:var(--yellow); }
+    .hero-sub { font-family:'Nunito',sans-serif; font-size:1.05rem; color:var(--text-dim); max-width:560px; margin-bottom:2.5rem; animation:fadeDown 0.7s 0.2s ease both; }
+
+    .hero-btns { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; animation:fadeDown 0.7s 0.3s ease both; }
+    .btn-primary { background:var(--green); color:#000; padding:0.75rem 1.8rem; border:none; font-family:'Syne',sans-serif; font-weight:800; font-size:0.85rem; cursor:pointer; text-decoration:none; letter-spacing:1px; transition:all 0.2s; clip-path:polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px)); }
+    .btn-primary:hover { background:#fff; box-shadow:0 0 30px var(--green); transform:translateY(-2px); }
+    .btn-outline { background:transparent; color:var(--green); padding:0.75rem 1.8rem; border:1px solid var(--border); font-family:'Syne',sans-serif; font-size:0.85rem; cursor:pointer; text-decoration:none; letter-spacing:1px; transition:all 0.2s; }
+    .btn-outline:hover { border-color:var(--green); background:var(--green-faint); }
+
+    .hero-guanabara {
+      margin-top:3.5rem; display:flex; align-items:center; gap:1rem;
+      border:1px solid rgba(255,209,102,0.2); background:rgba(255,209,102,0.04);
+      padding:0.8rem 1.5rem; border-radius:8px; animation:fadeDown 0.7s 0.4s ease both;
+    }
+    .hero-guanabara span { font-size:1.5rem; }
+    .hero-guanabara p { font-family:'Nunito',sans-serif; font-size:0.78rem; color:var(--text-dim); text-align:left; }
+    .hero-guanabara strong { color:var(--yellow); }
+
+    @keyframes fadeDown { from{opacity:0;transform:translateY(-18px)} to{opacity:1;transform:none} }
+
+    /* LAYOUT */
+    section { padding: 5rem 2rem; }
+    .container { max-width: 1080px; margin: 0 auto; }
+    .section-tag { font-size:0.63rem; color:var(--green); letter-spacing:3px; text-transform:uppercase; margin-bottom:0.4rem; display:flex; align-items:center; gap:0.5rem; }
+    .section-tag::before { content:'//'; color:var(--text-dim); }
+    .section-title { font-family:'Syne',sans-serif; font-size:clamp(1.7rem,4vw,2.6rem); font-weight:800; margin-bottom:0.8rem; letter-spacing:-1px; }
+    .section-subtitle { font-family:'Nunito',sans-serif; color:var(--text-dim); font-size:0.95rem; max-width:580px; margin-bottom:3rem; line-height:1.7; }
+
+    /* BALÃO DE FALA */
+    .balloon-wrap { display:flex; align-items:flex-start; gap:1.2rem; margin-bottom:2rem; }
+    .balloon-wrap.right { flex-direction:row-reverse; }
+
+    .balloon-avatar { width:52px; height:52px; border-radius:50%; border:2px solid var(--green); background:var(--bg3); display:flex; align-items:center; justify-content:center; font-size:1.6rem; flex-shrink:0; box-shadow:0 0 14px rgba(0,255,135,0.2); }
+    .balloon-avatar.yellow { border-color:var(--yellow); box-shadow:0 0 14px rgba(255,209,102,0.2); }
+    .balloon-avatar.blue   { border-color:var(--blue);   box-shadow:0 0 14px rgba(76,201,240,0.2); }
+    .balloon-avatar.purple { border-color:var(--purple); box-shadow:0 0 14px rgba(185,124,255,0.2); }
+
+    .balloon { background:var(--bg3); border:1px solid var(--border); padding:1rem 1.3rem; border-radius:0 12px 12px 12px; position:relative; max-width:680px; font-family:'Nunito',sans-serif; font-size:0.92rem; line-height:1.7; }
+    .balloon::before { content:''; position:absolute; top:0; left:-9px; border:9px solid transparent; border-top-color:var(--border); border-right-color:var(--border); }
+    .balloon.right { border-radius:12px 0 12px 12px; }
+    .balloon.right::before { left:auto; right:-9px; border-top-color:var(--border); border-left-color:var(--border); border-right-color:transparent; }
+    .balloon.yellow { border-color:rgba(255,209,102,0.25); }
+    .balloon.yellow::before { border-top-color:rgba(255,209,102,0.25); border-right-color:rgba(255,209,102,0.25); }
+    .balloon.blue { border-color:rgba(76,201,240,0.25); }
+    .balloon.blue::before { border-top-color:rgba(76,201,240,0.25); border-right-color:rgba(76,201,240,0.25); }
+    .balloon.purple { border-color:rgba(185,124,255,0.25); }
+    .balloon.purple::before { border-top-color:rgba(185,124,255,0.25); border-right-color:rgba(185,124,255,0.25); }
+
+    .balloon-name { font-size:0.65rem; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:0.3rem; font-family:'JetBrains Mono',monospace; }
+    .balloon-name.green  { color:var(--green); }
+    .balloon-name.yellow { color:var(--yellow); }
+    .balloon-name.blue   { color:var(--blue); }
+    .balloon-name.purple { color:var(--purple); }
+
+    .balloon strong { color:var(--text); }
+    .balloon code { background:rgba(0,255,135,0.08); color:var(--green); padding:0.1rem 0.4rem; border-radius:3px; font-family:'JetBrains Mono',monospace; font-size:0.82rem; }
+    .balloon .hl-yellow { color:var(--yellow); font-weight:700; }
+    .balloon .hl-blue   { color:var(--blue);   font-weight:700; }
+    .balloon .hl-purple { color:var(--purple); font-weight:700; }
+
+    /* CÓDIGO */
+    .code-block { border:1px solid var(--border); background:#060a07; margin:1.5rem 0; border-radius:4px; overflow:hidden; }
+    .code-header { display:flex; align-items:center; justify-content:space-between; padding:0.6rem 1.2rem; border-bottom:1px solid var(--border); background:var(--bg3); }
+    .code-dots { display:flex; gap:6px; }
+    .dot { width:10px; height:10px; border-radius:50%; }
+    .dot-r{background:#ff5f57} .dot-y{background:#febc2e} .dot-g{background:#28c840}
+    .code-lang { font-size:0.65rem; letter-spacing:2px; text-transform:uppercase; }
+    .code-lang.portugol { color:var(--yellow); }
+    .code-lang.python   { color:var(--blue); }
+    .code-annotation { font-size:0.68rem; color:var(--text-dim); font-style:italic; }
+    pre { padding:1.4rem 1.5rem; overflow-x:auto; font-size:0.82rem; line-height:1.85; tab-size:2; }
+
+    /* SYNTAX */
+    .kw  { color:#ff79c6; font-weight:600; }
+    .fn  { color:var(--blue); }
+    .str { color:var(--yellow); }
+    .num { color:var(--purple); }
+    .cm  { color:#546e5e; font-style:italic; }
+    .op  { color:var(--green); }
+    .var { color:#f8f8f2; }
+    .tkw { color:var(--orange); }
+    .pt  { color:var(--green); font-weight:600; }
+
+    /* ANOTAÇÃO LATERAL */
+    .annotated { display:grid; grid-template-columns:1fr 280px; gap:1.5rem; align-items:start; margin:2rem 0; }
+    .annotation-list { display:flex; flex-direction:column; gap:0.8rem; }
+    .ann-item { display:flex; gap:0.7rem; align-items:flex-start; padding:0.8rem 1rem; border:1px solid var(--border); background:var(--bg3); border-radius:4px; }
+    .ann-num { font-family:'Syne',sans-serif; font-weight:800; font-size:1rem; color:var(--green); opacity:0.5; line-height:1; min-width:20px; }
+    .ann-text { font-family:'Nunito',sans-serif; font-size:0.8rem; color:var(--text-dim); line-height:1.5; }
+    .ann-text strong { color:var(--text); }
+
+    /* CONCEITO CARD */
+    .conceito-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.2rem; margin-bottom:2rem; }
+    .conceito-card { border:1px solid var(--border); background:var(--bg3); padding:1.5rem; border-radius:4px; transition:all 0.3s; }
+    .conceito-card:hover { border-color:var(--green); transform:translateY(-3px); }
+    .conceito-icon { font-size:1.8rem; margin-bottom:0.7rem; }
+    .conceito-title { font-family:'Syne',sans-serif; font-weight:800; font-size:0.95rem; margin-bottom:0.4rem; }
+    .conceito-body { font-family:'Nunito',sans-serif; font-size:0.82rem; color:var(--text-dim); line-height:1.6; }
+    .conceito-body code { background:var(--green-faint); color:var(--green); padding:0.1rem 0.4rem; border-radius:3px; font-family:'JetBrains Mono',monospace; font-size:0.78rem; }
+
+    /* DICA BOX */
+    .tip-box { display:flex; gap:1rem; align-items:flex-start; padding:1.2rem 1.4rem; border-radius:4px; margin:1.5rem 0; }
+    .tip-box.green  { background:rgba(0,255,135,0.05);  border:1px solid rgba(0,255,135,0.2); }
+    .tip-box.yellow { background:rgba(255,209,102,0.05); border:1px solid rgba(255,209,102,0.2); }
+    .tip-box.red    { background:rgba(255,77,109,0.05);  border:1px solid rgba(255,77,109,0.2); }
+    .tip-box.blue   { background:rgba(76,201,240,0.05);  border:1px solid rgba(76,201,240,0.2); }
+    .tip-icon { font-size:1.4rem; }
+    .tip-content { font-family:'Nunito',sans-serif; font-size:0.85rem; line-height:1.6; }
+    .tip-content strong { display:block; margin-bottom:0.2rem; }
+    .tip-box.green  .tip-content strong { color:var(--green); }
+    .tip-box.yellow .tip-content strong { color:var(--yellow); }
+    .tip-box.red    .tip-content strong { color:var(--red); }
+    .tip-box.blue   .tip-content strong { color:var(--blue); }
+    .inline-code { background:rgba(0,255,135,0.08); color:var(--green); padding:0.1rem 0.4rem; border-radius:3px; font-family:'JetBrains Mono',monospace; font-size:0.8rem; }
+
+    /* TABS */
+    .tabs { display:flex; gap:0.5rem; flex-wrap:wrap; }
+    .tab-btn { background:transparent; border:1px solid var(--border); color:var(--text-dim); padding:0.45rem 1.1rem; font-family:'JetBrains Mono',monospace; font-size:0.73rem; cursor:pointer; letter-spacing:0.5px; transition:all 0.2s; }
+    .tab-btn.active, .tab-btn:hover { color:var(--yellow); border-color:var(--yellow); background:rgba(255,209,102,0.05); }
+    .tab-btn.py.active, .tab-btn.py:hover { color:var(--blue); border-color:var(--blue); background:rgba(76,201,240,0.05); }
+    .code-panel { display:none; }
+    .code-panel.active { display:block; }
+
+    /* TABLE */
+    .table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; font-size:0.82rem; }
+    th { text-align:left; padding:0.9rem 1.2rem; color:var(--green); border-bottom:1px solid var(--border); font-size:0.68rem; text-transform:uppercase; letter-spacing:1px; }
+    td { padding:0.8rem 1.2rem; border-bottom:1px solid rgba(255,255,255,0.04); }
+    tr:hover td { background:var(--green-faint); }
+    .badge { display:inline-block; padding:0.15rem 0.6rem; border-radius:3px; font-size:0.68rem; font-weight:700; }
+    .badge-green  { background:rgba(0,255,135,0.1);  color:var(--green); }
+    .badge-yellow { background:rgba(255,209,102,0.1); color:var(--yellow); }
+    .badge-red    { background:rgba(255,77,109,0.1);  color:var(--red); }
+    .badge-blue   { background:rgba(76,201,240,0.1);  color:var(--blue); }
+
+    /* ROADMAP */
+    .roadmap { position:relative; padding-left:2rem; }
+    .roadmap::before { content:''; position:absolute; left:0; top:0; bottom:0; width:1px; background:linear-gradient(to bottom, transparent, var(--green), transparent); }
+    .road-item { position:relative; margin-bottom:2.5rem; padding-left:1.5rem; }
+    .road-item::before { content:''; position:absolute; left:-2rem; top:0.3rem; width:10px; height:10px; background:var(--bg); border:2px solid var(--green); border-radius:50%; box-shadow:0 0 10px var(--green); }
+    .road-phase { font-size:0.63rem; color:var(--green); letter-spacing:2px; text-transform:uppercase; margin-bottom:0.3rem; }
+    .road-title { font-family:'Syne',sans-serif; font-weight:800; font-size:1rem; margin-bottom:0.5rem; }
+    .road-tags { display:flex; flex-wrap:wrap; gap:0.4rem; }
+    .road-tags span { border:1px solid var(--border); padding:0.2rem 0.7rem; border-radius:3px; font-size:0.72rem; color:var(--text-dim); }
+
+    /* LIVROS */
+    .books-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.2rem; }
+    .book-card { border:1px solid var(--border); background:var(--bg3); padding:1.6rem; transition:all 0.3s; position:relative; overflow:hidden; }
+    .book-card::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:linear-gradient(90deg, var(--green), transparent); transform:scaleX(0); transform-origin:left; transition:transform 0.3s; }
+    .book-card:hover { border-color:var(--green); transform:translateY(-4px); }
+    .book-card:hover::after { transform:scaleX(1); }
+    .book-emoji { font-size:2.2rem; margin-bottom:0.8rem; }
+    .book-level { font-size:0.63rem; letter-spacing:2px; text-transform:uppercase; margin-bottom:0.4rem; }
+    .book-title  { font-family:'Syne',sans-serif; font-weight:800; font-size:0.95rem; margin-bottom:0.25rem; line-height:1.3; }
+    .book-author { font-size:0.7rem; color:var(--text-dim); margin-bottom:0.7rem; }
+    .book-desc   { font-family:'Nunito',sans-serif; font-size:0.78rem; color:var(--text-dim); line-height:1.6; }
+
+    /* RECURSOS */
+    .resources-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; }
+    .resource-card { border:1px solid var(--border); background:var(--bg3); padding:1.1rem 1.4rem; display:flex; align-items:center; gap:0.9rem; text-decoration:none; transition:all 0.25s; }
+    .resource-card:hover { border-color:var(--green); background:var(--green-faint); transform:translateX(4px); }
+    .resource-icon { font-size:1.4rem; }
+    .resource-name { font-weight:700; font-size:0.82rem; color:var(--text); margin-bottom:0.1rem; }
+    .resource-desc { font-size:0.68rem; color:var(--text-dim); }
+
+    /* FIX: nav fixa não sobrepõe as seções ao rolar */
+    section[id] { scroll-margin-top: 70px; }
+
+    /* DIVIDER */
+    .divider { display:flex; align-items:center; gap:1rem; margin:3rem 0 2rem; }
+    .divider::before, .divider::after { content:''; flex:1; height:1px; background:var(--border); }
+    .divider span { font-size:0.65rem; color:var(--text-dim); letter-spacing:2px; text-transform:uppercase; white-space:nowrap; }
+
+    /* REVEAL */
+    .reveal { opacity:0; transform:translateY(28px); transition:opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity:1; transform:none; }
+
+    /* FOOTER */
+    footer { padding:3rem 2rem; border-top:1px solid var(--border); text-align:center; }
+    .footer-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.2rem; color:var(--green); margin-bottom:0.5rem; }
+    .footer-text { font-family:'Nunito',sans-serif; font-size:0.8rem; color:var(--text-dim); }
+
+    /* FLUXOGRAMA */
+    .fluxo-legend { display:flex; flex-wrap:wrap; gap:1rem; margin-bottom:2.5rem; }
+    .fluxo-legend-item { display:flex; align-items:center; gap:0.6rem; font-family:'Nunito',sans-serif; font-size:0.8rem; color:var(--text-dim); }
+    .fluxo-legend-box { width:28px; height:18px; border-radius:2px; flex-shrink:0; }
+    .fluxo-legend-diamond { width:20px; height:20px; transform:rotate(45deg); flex-shrink:0; }
+    .fluxo-legend-circle { width:18px; height:18px; border-radius:50%; flex-shrink:0; }
+
+    .fluxo-grid { display:grid; grid-template-columns: 1fr 1fr; gap:2rem; align-items:start; }
+    .fluxo-title { font-family:'Syne',sans-serif; font-weight:800; font-size:1rem; margin-bottom:1rem; color:var(--text); }
+    .fluxo-subtitle { font-family:'Nunito',sans-serif; font-size:0.8rem; color:var(--text-dim); margin-bottom:1.2rem; line-height:1.6; }
+
+    .fluxo-svg-wrap {
+      border:1px solid var(--border); background:var(--bg3);
+      padding:1.5rem; border-radius:4px; display:flex;
+      justify-content:center; align-items:flex-start;
+    }
+    .fluxo-svg-wrap svg { max-width:100%; height:auto; }
+
+    /* SVG elements */
+    .f-terminal    { fill:#0d1a10; stroke:var(--green);  stroke-width:1.5; rx:20; }
+    .f-process     { fill:#0d1a10; stroke:var(--blue);   stroke-width:1.5; }
+    .f-decision    { fill:#0d1a10; stroke:var(--yellow); stroke-width:1.5; }
+    .f-io          { fill:#0d1a10; stroke:var(--purple); stroke-width:1.5; }
+    .f-arrow       { stroke:var(--text-dim); stroke-width:1.2; fill:none; marker-end:url(#arr); }
+    .f-label       { font-family:'JetBrains Mono',monospace; font-size:11px; fill:var(--text); text-anchor:middle; dominant-baseline:middle; }
+    .f-label-sm    { font-family:'JetBrains Mono',monospace; font-size:9px;  fill:var(--text-dim); text-anchor:middle; }
+    .f-cond        { font-family:'Nunito',sans-serif; font-size:9px; font-weight:700; fill:var(--yellow); }
+
+    @media (max-width:780px) { .fluxo-grid { grid-template-columns:1fr; } }
+    ::-webkit-scrollbar-track { background:var(--bg); }
+    ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+    ::-webkit-scrollbar-thumb:hover { background:var(--green-dim); }
+
+    /* ERROS COMUNS */
+    .erro-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:2rem; }
+    .erro-card { border-radius:4px; overflow:hidden; border:1px solid var(--border); }
+    .erro-header { display:flex; align-items:center; gap:0.6rem; padding:0.6rem 1rem; font-family:'Syne',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; }
+    .erro-header.wrong { background:rgba(255,77,109,0.12); color:var(--red); border-bottom:1px solid rgba(255,77,109,0.2); }
+    .erro-header.right  { background:rgba(0,255,135,0.08); color:var(--green); border-bottom:1px solid rgba(0,255,135,0.15); }
+    .erro-card pre { margin:0; padding:1rem; font-size:0.8rem; line-height:1.7; background:var(--bg3); }
+    .erro-explain { padding:0.7rem 1rem; font-family:'Nunito',sans-serif; font-size:0.8rem; color:var(--text-dim); background:var(--bg2); border-top:1px solid var(--border); line-height:1.6; }
+    @media(max-width:700px){ .erro-grid { grid-template-columns:1fr; } }
+
+    /* EXERCÍCIOS */
+    .ex-card { border:1px solid var(--border); border-radius:4px; margin-bottom:1.5rem; overflow:hidden; background:var(--bg3); }
+    .ex-header { display:flex; align-items:center; gap:1rem; padding:1rem 1.2rem; background:var(--bg2); border-bottom:1px solid var(--border); }
+    .ex-num { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Syne',sans-serif; font-weight:800; font-size:0.85rem; flex-shrink:0; }
+    .ex-num.easy   { background:rgba(0,255,135,0.12); color:var(--green); border:1px solid rgba(0,255,135,0.3); }
+    .ex-num.medium { background:rgba(255,209,102,0.12); color:var(--yellow); border:1px solid rgba(255,209,102,0.3); }
+    .ex-num.hard   { background:rgba(255,77,109,0.12); color:var(--red); border:1px solid rgba(255,77,109,0.3); }
+    .ex-title { font-family:'Syne',sans-serif; font-weight:700; font-size:0.95rem; color:var(--text); }
+    .ex-level { font-family:'Nunito',sans-serif; font-size:0.7rem; padding:0.15rem 0.6rem; border-radius:100px; margin-left:auto; flex-shrink:0; }
+    .ex-level.easy   { background:rgba(0,255,135,0.08); color:var(--green); }
+    .ex-level.medium { background:rgba(255,209,102,0.08); color:var(--yellow); }
+    .ex-level.hard   { background:rgba(255,77,109,0.08); color:var(--red); }
+    .ex-body { padding:1.2rem; }
+    .ex-enunciado { font-family:'Nunito',sans-serif; font-size:0.9rem; color:var(--text); line-height:1.8; margin-bottom:1rem; }
+    .ex-toggle { display:flex; gap:0.8rem; flex-wrap:wrap; }
+    .btn-toggle { background:none; border:1px solid var(--border); color:var(--text-dim); padding:0.3rem 0.9rem; border-radius:3px; font-family:'JetBrains Mono',monospace; font-size:0.72rem; cursor:pointer; transition:all 0.2s; }
+    .btn-toggle:hover { border-color:var(--green); color:var(--green); }
+    .btn-toggle.open  { border-color:var(--green); color:var(--green); background:rgba(0,255,135,0.06); }
+    .ex-hint, .ex-gabarito { display:none; margin-top:1rem; }
+    .ex-hint.show, .ex-gabarito.show { display:block; }
+    .ex-hint-inner { padding:0.8rem 1rem; background:rgba(255,209,102,0.06); border:1px solid rgba(255,209,102,0.2); border-radius:3px; font-family:'Nunito',sans-serif; font-size:0.85rem; color:var(--yellow); line-height:1.7; }
+
+    /* QUIZ */
+    .quiz-wrap { max-width:720px; margin:0 auto; }
+    .quiz-progress { display:flex; gap:0.4rem; margin-bottom:2rem; }
+    .quiz-dot { flex:1; height:4px; border-radius:2px; background:var(--border); transition:background 0.3s; }
+    .quiz-dot.done { background:var(--green); }
+    .quiz-dot.active { background:var(--yellow); }
+    .quiz-question { font-family:'Syne',sans-serif; font-weight:700; font-size:1.05rem; color:var(--text); margin-bottom:1.2rem; line-height:1.5; }
+    .quiz-code { background:var(--bg3); border:1px solid var(--border); border-radius:4px; padding:1rem 1.2rem; font-family:'JetBrains Mono',monospace; font-size:0.82rem; line-height:1.8; margin-bottom:1.2rem; overflow-x:auto; }
+    .quiz-options { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin-bottom:1rem; }
+    .quiz-opt { background:var(--bg3); border:1px solid var(--border); border-radius:4px; padding:0.8rem 1rem; font-family:'Nunito',sans-serif; font-size:0.88rem; color:var(--text); cursor:pointer; transition:all 0.2s; text-align:left; }
+    .quiz-opt:hover:not(:disabled) { border-color:var(--green); color:var(--green); }
+    .quiz-opt.correct  { border-color:var(--green)!important; background:rgba(0,255,135,0.08)!important; color:var(--green)!important; }
+    .quiz-opt.wrong    { border-color:var(--red)!important; background:rgba(255,77,109,0.08)!important; color:var(--red)!important; }
+    .quiz-opt:disabled { cursor:default; }
+    .quiz-feedback { font-family:'Nunito',sans-serif; font-size:0.85rem; padding:0.6rem 1rem; border-radius:3px; margin-bottom:0.8rem; display:none; line-height:1.6; }
+    .quiz-feedback.show { display:block; }
+    .quiz-feedback.ok  { background:rgba(0,255,135,0.06); color:var(--green); border:1px solid rgba(0,255,135,0.2); }
+    .quiz-feedback.err { background:rgba(255,77,109,0.06); color:var(--red); border:1px solid rgba(255,77,109,0.2); }
+    .quiz-nav { display:flex; justify-content:flex-end; }
+    .btn-quiz-next { background:var(--green); color:#000; border:none; border-radius:3px; padding:0.5rem 1.4rem; font-family:'Syne',sans-serif; font-weight:700; font-size:0.82rem; cursor:pointer; display:none; }
+    .btn-quiz-next.show { display:inline-block; }
+    .quiz-result { text-align:center; padding:2rem 1rem; display:none; }
+    .quiz-result.show { display:block; }
+    .quiz-score { font-family:'Syne',sans-serif; font-size:3.5rem; font-weight:800; color:var(--green); }
+    .quiz-score-label { font-family:'Nunito',sans-serif; color:var(--text-dim); margin-top:0.3rem; font-size:0.9rem; }
+    .quiz-msg { font-family:'Nunito',sans-serif; font-size:1rem; color:var(--text); margin-top:1rem; line-height:1.7; }
+    .btn-quiz-restart { margin-top:1.5rem; background:none; border:1px solid var(--green); color:var(--green); padding:0.5rem 1.6rem; border-radius:3px; font-family:'Syne',sans-serif; font-weight:700; font-size:0.82rem; cursor:pointer; }
+    @media(max-width:600px){ .quiz-options { grid-template-columns:1fr; } }
+
+    /* BOTÃO FLUTUANTE SCROLL */
+    .scroll-fab {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(13,20,16,0.88);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(10px);
+      transition: border-color 0.2s, color 0.2s;
+      z-index: 999;
+    }
+    .scroll-fab.visible { display: flex; }
+    .scroll-fab:hover { border-color: var(--green); color: var(--green); }
+    .scroll-fab.playing { border-color: rgba(0,255,135,0.35); color: var(--green); }
+
+    @media (max-width: 860px) { .annotated { grid-template-columns:1fr; } }
+    @media (max-width: 640px) { nav { padding:0 1rem; } .nav-links { display:none; } section { padding:3rem 1rem; } .hero-guanabara { flex-direction:column; text-align:center; } }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-logo">algo<span>master</span></div>
+    <ul class="nav-links">
+      <li><a href="#portugol">Portugol</a></li>
+      <li><a href="#fluxograma">Fluxograma</a></li>
+      <li><a href="#conceitos">Conceitos</a></li>
+      <li><a href="#exemplos">Exemplos</a></li>
+      <li><a href="#erros">Erros</a></li>
+      <li><a href="#exercicios">Exercícios</a></li>
+      <li><a href="#quiz">Quiz</a></li>
+      <li><a href="#complexidade">Big O</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
+      <li><a href="#livros">Livros</a></li>
+      <li><a href="#recursos" style="color:var(--green);border:1px solid var(--border);padding:0.2rem 0.7rem;border-radius:3px;">Recursos</a></li>
+    </ul>
+  </nav>
+
+  <button class="scroll-fab" id="scroll-fab" onclick="toggleScroll()" title="Play / Pause rolagem"></button>
+  <section class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-badge">Guia Didático de Algoritmos</div>
+    <h1>Algoritmos com<br><span class="accent2">Portugol</span> —<br><span class="accent">do zero ao domínio</span></h1>
+    <p class="hero-sub">Aprenda lógica e algoritmos em português, do jeito mais simples e didático possível — com balões explicativos, exemplos comentados e uma trilha clara de evolução.</p>
+    <div class="hero-btns">
+      <button onclick="scrollSuave()" class="btn-primary" style="cursor:pointer;border:none;">↓ Rolar página</button>
+      <a href="#exemplos" class="btn-outline">Ver Exemplos</a>
+    </div>
+    <div class="hero-guanabara">
+      <span>🎓</span>
+      <p>Inspirado na metodologia do <strong>Curso em Vídeo</strong> do Prof. <strong>Gustavo Guanabara</strong> — referência em ensino de programação em português.</p>
+    </div>
+  </section>
+
+  <!-- O QUE É PORTUGOL -->
+  <section id="portugol" style="background:var(--bg2)">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-tag">O Ponto de Partida</p>
+        <h2 class="section-title">O que é Portugol?</h2>
+        <p class="section-subtitle">Antes de aprender qualquer linguagem de programação, você precisa pensar como um computador. O Portugol te ensina exatamente isso.</p>
+      </div>
+
+      <div class="balloon-wrap reveal">
+        <div class="balloon-avatar">🤖</div>
+        <div class="balloon">
+          <div class="balloon-name green">AlgoMaster</div>
+          <strong>Portugol é um pseudocódigo em português.</strong> Ele não roda em nenhum computador real — e isso é proposital! O objetivo não é executar o código, mas sim <span class="hl-yellow">treinar o raciocínio lógico</span> sem se preocupar com a sintaxe de uma linguagem específica.
+        </div>
+      </div>
+
+      <div class="balloon-wrap right reveal">
+        <div class="balloon-avatar yellow">🎓</div>
+        <div class="balloon right yellow">
+          <div class="balloon-name yellow">Prof. Guanabara diria:</div>
+          Quando você escreve em Portugol, você está <span class="hl-yellow">descrevendo a solução</span>, não programando. É como fazer um rascunho antes de pintar. Depois que a lógica estiver certa, traduzir para Python, JavaScript ou Java é a parte fácil!
+        </div>
+      </div>
+
+      <div class="balloon-wrap reveal">
+        <div class="balloon-avatar">🤖</div>
+        <div class="balloon">
+          <div class="balloon-name green">AlgoMaster</div>
+          No Portugol, usamos palavras como <code>algoritmo</code>, <code>inicio</code>, <code>fim</code>, <code>escreva</code>, <code>leia</code>, <code>se</code>, <code>enquanto</code> — tudo em português! Isso elimina a barreira do idioma e deixa você <span class="hl-yellow">focar no que importa: a lógica.</span>
+        </div>
+      </div>
+
+      <div class="tip-box yellow reveal">
+        <div class="tip-icon">💡</div>
+        <div class="tip-content">
+          <strong>Por que aprender Portugol primeiro?</strong>
+          Alunos que aprendem lógica com pseudocódigo antes de uma linguagem real consolidam o aprendizado muito mais rápido. Você não luta contra a sintaxe — você pensa na solução.
+        </div>
+      </div>
+
+      <div class="conceito-grid reveal">
+        <div class="conceito-card">
+          <div class="conceito-icon">📝</div>
+          <div class="conceito-title">Pseudocódigo</div>
+          <div class="conceito-body">Texto que imita código mas é legível por humanos. Não tem regras rígidas de sintaxe — só lógica. Portugol é um pseudocódigo padronizado para o português.</div>
+        </div>
+        <div class="conceito-card">
+          <div class="conceito-icon">🔄</div>
+          <div class="conceito-title">Algoritmo</div>
+          <div class="conceito-body">Uma sequência <strong>finita</strong> de passos bem definidos para resolver um problema. Todo programa é um algoritmo — Portugol te ensina a criar bons algoritmos.</div>
+        </div>
+        <div class="conceito-card">
+          <div class="conceito-icon">🧠</div>
+          <div class="conceito-title">Lógica de Programação</div>
+          <div class="conceito-body">A capacidade de decompor um problema em passos lógicos e ordená-los corretamente. É a habilidade mais importante de um programador — e transferível para qualquer linguagem.</div>
+        </div>
+        <div class="conceito-card">
+          <div class="conceito-icon">⚙️</div>
+          <div class="conceito-title">Visualg 3.0</div>
+          <div class="conceito-body">Ferramenta gratuita onde você pode <strong>executar Portugol de verdade</strong>! O <code>Visualg</code> é o mais usado no Brasil e perfeito para iniciantes executarem seus algoritmos.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLUXOGRAMA -->
+  <section id="fluxograma" style="background:var(--bg2)">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-tag">Visualizando a Lógica</p>
+        <h2 class="section-title">Fluxograma</h2>
+        <p class="section-subtitle">Antes de escrever qualquer linha de Portugol, desenhe o fluxograma. Ele é o mapa do seu algoritmo — você pensa com o lápis antes de codificar.</p>
+      </div>
+
+      <div class="balloon-wrap reveal">
+        <div class="balloon-avatar yellow">🎓</div>
+        <div class="balloon yellow">
+          <div class="balloon-name yellow">Prof. Guanabara diria:</div>
+          Todo algoritmo que você escrever à mão ou no Visualg, <strong>comece pelo fluxograma</strong>. Ele força você a pensar em todos os caminhos possíveis antes de codificar. Se o fluxograma estiver certo, o Portugol será só uma tradução!
+        </div>
+      </div>
+
+      <!-- LEGENDA -->
+      <div class="fluxo-legend reveal">
+        <div class="fluxo-legend-item">
+          <div style="width:32px;height:20px;background:#0d1a10;border:2px solid var(--green);border-radius:10px;flex-shrink:0;"></div>
+          Terminal (Início / Fim)
+        </div>
+        <div class="fluxo-legend-item">
+          <div style="width:32px;height:20px;background:#0d1a10;border:2px solid var(--blue);flex-shrink:0;border-radius:2px;"></div>
+          Processo (cálculo, atribuição)
+        </div>
+        <div class="fluxo-legend-item">
+          <div style="width:20px;height:20px;background:#0d1a10;border:2px solid var(--yellow);transform:rotate(45deg);flex-shrink:0;"></div>
+          <span style="margin-left:6px;">Decisão (se / senão)</span>
+        </div>
+        <div class="fluxo-legend-item">
+          <div style="width:36px;height:20px;background:#0d1a10;border:2px solid var(--purple);flex-shrink:0;border-radius:2px;transform:skewX(-10deg);"></div>
+          <span style="margin-left:4px;">Entrada / Saída (leia / escreva)</span>
+        </div>
+        <div class="fluxo-legend-item">
+          <div style="width:28px;height:2px;background:var(--text-dim);flex-shrink:0;position:relative;">
+            <div style="position:absolute;right:-1px;top:-3px;border:4px solid transparent;border-left-color:var(--text-dim);"></div>
+          </div>
+          Fluxo (seta)
+        </div>
+      </div>
+
+      <!-- EXEMPLO 1: DECISÃO -->
+      <div class="divider reveal"><span>Exemplo 1 — Verificar Aprovação</span></div>
+
+      <div class="balloon-wrap reveal">
+        <div class="balloon-avatar">🤖</div>
+        <div class="balloon">
+          <div class="balloon-name green">AlgoMaster</div>
+          Leia o fluxograma de <strong>cima para baixo</strong>, seguindo as setas. Nos losangos de decisão, o caminho bifurca em <span class="hl-yellow">Sim</span> ou <span class="hl-yellow">Não</span>. Ao lado, veja como cada forma se traduz diretamente em Portugol.
+        </div>
+      </div>
+
+      <div class="fluxo-grid reveal">
+        <div class="fluxo-svg-wrap">
+          <svg viewBox="0 0 220 500" width="220" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#7aab88"/>
+              </marker>
+            </defs>
+            <rect x="60" y="10" width="100" height="30" rx="15" fill="#0d1a10" stroke="#00ff87" stroke-width="1.5"/>
+            <text x="110" y="25" class="f-label" font-size="11">INÍCIO</text>
+            <line x1="110" y1="40" x2="110" y2="65" class="f-arrow"/>
+            <polygon points="70,65 150,65 140,90 60,90" fill="#0d1a10" stroke="#b97cff" stroke-width="1.5"/>
+            <text x="110" y="78" class="f-label" font-size="10">leia(nota)</text>
+            <line x1="110" y1="90" x2="110" y2="120" class="f-arrow"/>
+            <polygon points="110,120 160,155 110,190 60,155" fill="#0d1a10" stroke="#ffd166" stroke-width="1.5"/>
+            <text x="110" y="149" class="f-label" font-size="9">nota</text>
+            <text x="110" y="161" class="f-label" font-size="9">&gt;= 7.0?</text>
+            <line x1="60" y1="155" x2="20" y2="155" class="f-arrow"/>
+            <text x="38" y="148" class="f-cond">Sim</text>
+            <line x1="20" y1="155" x2="20" y2="225" class="f-arrow"/>
+            <line x1="110" y1="190" x2="110" y2="215" class="f-arrow"/>
+            <text x="120" y="206" class="f-cond">Não</text>
+            <polygon points="0,225 80,225 70,250 10,250" fill="#0d1a10" stroke="#b97cff" stroke-width="1.5"/>
+            <text x="40" y="238" class="f-label" font-size="9">✅ Aprovado</text>
+            <polygon points="110,215 160,250 110,285 60,250" fill="#0d1a10" stroke="#ffd166" stroke-width="1.5"/>
+            <text x="110" y="244" class="f-label" font-size="9">nota</text>
+            <text x="110" y="256" class="f-label" font-size="9">&gt;= 5.0?</text>
+            <line x1="160" y1="250" x2="200" y2="250" class="f-arrow"/>
+            <text x="172" y="243" class="f-cond">Sim</text>
+            <line x1="200" y1="250" x2="200" y2="315" class="f-arrow"/>
+            <line x1="110" y1="285" x2="110" y2="310" class="f-arrow"/>
+            <text x="120" y="302" class="f-cond">Não</text>
+            <polygon points="140,315 220,315 210,340 150,340" fill="#0d1a10" stroke="#b97cff" stroke-width="1.5"/>
+            <text x="183" y="328" class="f-label" font-size="9">⚠️ Recup.</text>
+            <polygon points="65,310 145,310 135,335 55,335" fill="#0d1a10" stroke="#b97cff" stroke-width="1.5"/>
+            <text x="100" y="323" class="f-label" font-size="9">❌ Reprovado</text>
+            <line x1="40" y1="250" x2="40" y2="390" class="f-arrow"/>
+            <line x1="100" y1="335" x2="100" y2="390" style="stroke:#7aab88;stroke-width:1.2;fill:none;marker-end:url(#arr)"/>
+            <line x1="183" y1="340" x2="183" y2="390" style="stroke:#7aab88;stroke-width:1.2;fill:none;marker-end:url(#arr)"/>
+            <line x1="40" y1="390" x2="110" y2="390" style="stroke:#7aab88;stroke-width:1.2;fill:none;"/>
+            <line x1="183" y1="390" x2="110" y2="390" style="stroke:#7aab88;stroke-width:1.2;fill:none;"/>
+            <line x1="110" y1="390" x2="110" y2="415" class="f-arrow"/>
+            <rect x="60" y="415" width="100" height="30" rx="15" fill="#0d1a10" stroke="#00ff87" stroke-width="1.5"/>
+            <text x="110" y="430" class="f-label" font-size="11">FIM</text>
+          </svg>
+        </div>
+        <div>
+          <div class="fluxo-title">Portugol correspondente</div>
+          <div class="fluxo-subtitle">Cada forma do fluxograma vira uma linha de Portugol. Perceba como os dois contam a mesma história — um visualmente, o outro em texto.</div>
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+              <span class="code-lang portugol">Portugol — do fluxo ao código</span>
+            </div>
+            <pre><span class="pt">algoritmo</span> <span class="str">"Aprovacao"</span>
+<span class="pt">var</span>
+   nota : <span class="tkw">real</span>
+
+<span class="pt">inicio</span>
+   <span class="cm">// 🔷 INÍCIO do fluxo</span>
+
+   <span class="cm">// ▱ Entrada de dados</span>
+   <span class="fn">leia</span>(nota)
+
+   <span class="cm">// ◇ 1ª Decisão: nota >= 7?</span>
+   <span class="pt">se</span> (nota <span class="op">&gt;=</span> <span class="num">7.0</span>) <span class="pt">entao</span>
+      <span class="fn">escreva</span>(<span class="str">"✅ Aprovado"</span>)
+   <span class="pt">senao</span>
+      <span class="cm">// ◇ 2ª Decisão: nota >= 5?</span>
+      <span class="pt">se</span> (nota <span class="op">&gt;=</span> <span class="num">5.0</span>) <span class="pt">entao</span>
+         <span class="fn">escreva</span>(<span class="str">"⚠️ Recuperação"</span>)
+      <span class="pt">senao</span>
+         <span class="fn">escreva</span>(<span class="str">"❌ Reprovado"</span>)
+      <span class="pt">fimse</span>
+   <span class="pt">fimse</span>
+
+   <span class="cm">// 🔷 FIM do fluxo</span>
+<span class="pt">fimalgoritmo</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXEMPLO 2: LAÇO -->
+      <div class="divider reveal"><span>Exemplo 2 — Somar Números com Laço</span></div>
+
+      <div class="balloon-wrap reveal">
+        <div class="balloon-avatar">🤖</div>
+        <div class="balloon">
+          <div class="balloon-name green">AlgoMaster</div>
+          Laços no fluxograma criam uma <strong>seta que volta para cima</strong> — é isso que define o loop visualmente. Enquanto a condição for verdadeira, o fluxo fica girando naquele ciclo. Quando for falsa, ele escapa e segue em frente.
+        </div>
+      </div>
+
+      <div class="fluxo-grid reveal">
+        <div class="fluxo-svg-wrap">
+          <svg viewBox="0 0 240 520" width="240" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#7aab88"/>
+              </marker>
+            </defs>
+            <rect x="70" y="10" width="100" height="30" rx="15" fill="#0d1a10" stroke="#00ff87" stroke-width="1.5"/>
+            <text x="120" y="25" class="f-label">INÍCIO</text>
+            <line x1="120" y1="40" x2="120" y2="65" style="stroke:#7aab88;stroke-width:1.2;fill:none;marker-end:url(#arr2)"/>
+            <rect x="50" y="65" width="140" height="40" rx="3" fill="#0d1a10" stroke="#4cc9f0" stroke-width="1.5"/>
+            <text x="120" y="80" class="f-label" font-size="10">soma ← 0</text>
+            <text x="120" y="96" class="f-label" font-size="10">i ← 1</text>
+            <line x1="120" y1="105" x2="120" y2="130" style="stroke:#7aab88;stroke-width:1.2;fill:none;marker-end:url(#arr2)"/>
+            <polygon points="120,130 185,167 120,204 55,167" fill="#0d1a10" stroke="#ffd166" stroke-width="1.5"/>
+            <text x="120" y="161" class="f-label" font-size="9">i &lt;= 5?</text>
+            <line x1="120" y1="204" x2="120" y2="228" style="stroke:#7aab88;stroke-width:1.2;fill:none;marker-end:url(#arr2)"/>
+            <text x="130" y="220" class="f-cond">Sim</text>
+            <rect x="50" y="228" width="140" height="30" rx="3" fill="#0d1a10" stroke="#4cc9f0" stroke-width="1.5"/>
+            <text x="120" y="246" class="f-label" font-size="10">soma ← soma + i</text>
+            <line x1="120" y1="258" x2="120" y2="283" style="stroke:#7aab88;stroke-width:1.2;fill:none;marker-end:url(#arr2)"/>
+            <rect x="50" y="283" width="140" height="30" rx="3" fill="#0d1a10" stroke="#4cc9f0" stroke-width="1.5"/>
+            <text x="120" y="300" class="f-label" font-size="10">i ← i + 1</text>
+            <line x1="50" y1="298" x2="15" y2="298" style="stroke:#7aab88;stroke-width:1.2;fill:none;"/>
+            <line x1="15" y1="298" x2="15" y2="167" style="stroke:#7aab88;stroke-width:1.2;fill:none;"/>
+            <line x1="15" y1="167" x2="55" y2="167" style="stroke:#7aab88;stroke-width:1.2;fill:none;marker-end:url(#arr2)"/>
+            <text x="5" y="235" class="f-cond" style="font-size:8px;writing-mode:vertical-rl;transform:rotate(180deg);transform-origin:5px 235px;">volta ao laço</text>
+            <line x1="185" y1="167" x2="220" y2="167" style="stroke:#7aab88;stroke-width:1.2;fill:none;"/>
+            <line x1="220" y1="167" x2="220" y2="370" style="stroke:#7aab88;stroke-width:1.2;fill:none;"/>
+            <line x1="220" y1="370" x2="175" y2="370" style="stroke:#7aab88;stroke-width:1.2;fill:none;marker-end:url(#arr2)"/>
+            <text x="200" y="160" class="f-cond">Não</text>
+            <polygon points="65,355 175,355 165,385 55,385" fill="#0d1a10" stroke="#b97cff" stroke-width="1.5"/>
+            <text x="115" y="372" class="f-label" font-size="10">escreva(soma)</text>
+            <line x1="115" y1="385" x2="115" y2="410" style="stroke:#7aab88;stroke-width:1.2;fill:none;marker-end:url(#arr2)"/>
+            <rect x="65" y="410" width="100" height="30" rx="15" fill="#0d1a10" stroke="#00ff87" stroke-width="1.5"/>
+            <text x="115" y="425" class="f-label">FIM</text>
+          </svg>
+        </div>
+        <div>
+          <div class="fluxo-title">Portugol correspondente</div>
+          <div class="fluxo-subtitle">A seta que volta para cima no fluxograma vira o laço <code style="background:rgba(0,255,135,0.08);color:var(--green);padding:0.1rem 0.4rem;border-radius:3px;font-size:0.8rem">enquanto</code> no Portugol. O losango de decisão é a condição do laço.</div>
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+              <span class="code-lang portugol">Portugol — laço enquanto</span>
+            </div>
+            <pre><span class="pt">algoritmo</span> <span class="str">"SomaComLaco"</span>
+<span class="pt">var</span>
+   soma, i : <span class="tkw">inteiro</span>
+
+<span class="pt">inicio</span>
+   <span class="cm">// ▭ Processo: inicialização</span>
+   soma <span class="op">&lt;-</span> <span class="num">0</span>
+   i    <span class="op">&lt;-</span> <span class="num">1</span>
+
+   <span class="cm">// ◇ Decisão: condição do laço</span>
+   <span class="pt">enquanto</span> (i <span class="op">&lt;=</span> <span class="num">5</span>) <span class="pt">faca</span>
+      <span class="cm">// ▭ Processo: acumula soma</span>
+      soma <span class="op">&lt;-</span> soma <span class="op">+</span> i
+      <span class="cm">// ▭ Processo: incrementa i</span>
+      i    <span class="op">&lt;-</span> i <span class="op">+</span> <span class="num">1</span>
+      <span class="cm">// ↑ seta volta para o ◇</span>
+   <span class="pt">fimenquanto</span>
+
+   <span class="cm">// ▱ Saída de dados</span>
+   <span class="fn">escreva</span>(<span class="str">"Soma: "</span>, soma) <span class="cm">// → 15</span>
+<span class="pt">fimalgoritmo</span></pre>
+          </div>
+          <div class="tip-box green" style="margin-top:1rem;">
+            <div class="tip-icon">✏️</div>
+            <div class="tip-content">
+              <strong>Dica do professor</strong>
+              Pegue papel e lápis, escreva o problema e desenhe as caixas e setas à mão. Só depois abra o Visualg! Esse exercício manual é o que solidifica o raciocínio lógico de verdade.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABELA DE FORMAS -->
+      <div class="divider reveal"><span>Resumo das Formas</span></div>
+      <div class="table-wrap reveal">
+        <table>
+          <thead>
+            <tr><th>Forma</th><th>Nome</th><th>Representa</th><th>Em Portugol</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><svg width="60" height="24"><rect x="2" y="2" width="56" height="20" rx="10" fill="#0d1a10" stroke="#00ff87" stroke-width="1.5"/><text x="30" y="13" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="#d4f0dc" font-family="monospace">oval</text></svg></td>
+              <td>Terminal</td><td>Início ou Fim do algoritmo</td><td><code>algoritmo / fimalgoritmo</code></td>
+            </tr>
+            <tr>
+              <td><svg width="60" height="24"><rect x="2" y="2" width="56" height="20" rx="2" fill="#0d1a10" stroke="#4cc9f0" stroke-width="1.5"/><text x="30" y="13" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="#d4f0dc" font-family="monospace">retângulo</text></svg></td>
+              <td>Processo</td><td>Cálculo, atribuição de valor</td><td><code>soma &lt;- soma + i</code></td>
+            </tr>
+            <tr>
+              <td><svg width="60" height="30"><polygon points="30,2 58,15 30,28 2,15" fill="#0d1a10" stroke="#ffd166" stroke-width="1.5"/><text x="30" y="16" text-anchor="middle" dominant-baseline="middle" font-size="8" fill="#d4f0dc" font-family="monospace">losango</text></svg></td>
+              <td>Decisão</td><td>Condição verdadeira ou falsa</td><td><code>se / enquanto</code></td>
+            </tr>
+            <tr>
+              <td><svg width="64" height="24"><polygon points="10,2 62,2 54,22 2,22" fill="#0d1a10" stroke="#b97cff" stroke-width="1.5"/><text x="32" y="13" text-anchor="middle" dominant-baseline="middle" font-size="8" fill="#d4f0dc" font-family="monospace">paralelogramo</text></svg></td>
+              <td>E/S de Dados</td><td>Entrada ou saída de informação</td><td><code>leia / escreva</code></td>
+            </tr>
+            <tr>
+              <td><svg width="40" height="24"><defs><marker id="arr3" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#7aab88"/></marker></defs><line x1="4" y1="12" x2="32" y2="12" stroke="#7aab88" stroke-width="1.5" marker-end="url(#arr3)"/></svg></td>
+              <td>Fluxo</td><td>Direção de execução</td><td>A ordem das linhas no código</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONCEITOS FUNDAMENTAIS -->
+  <section id="conceitos">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-tag">Fundamentos</p>
+        <h2 class="section-title">Conceitos Essenciais</h2>
+        <p class="section-subtitle">Os blocos de construção de qualquer algoritmo. Entenda cada um antes de avançar.</p>
+      </div>
+
+      <!-- VARIÁVEIS -->
+      <div class="divider reveal"><span>📦 Variáveis e Tipos</span></div>
+
+      <div class="balloon-wrap reveal">
+        <div class="balloon-avatar">🤖</div>
+        <div class="balloon">
+          <div class="balloon-name green">AlgoMaster</div>
+          Uma <strong>variável</strong> é uma caixa com nome que guarda um valor na memória. Em Portugol, você precisa <span class="hl-yellow">declarar</span> a variável antes de usar, dizendo qual é o tipo do dado que ela vai guardar.
+        </div>
+      </div>
+
+      <div class="annotated reveal">
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+            <span class="code-lang portugol">Portugol — Variáveis</span>
+          </div>
+          <pre><span class="pt">algoritmo</span> <span class="str">"ExemploVariaveis"</span>
+<span class="pt">var</span>
+   <span class="cm">// ① Declaração de variáveis com seus tipos</span>
+   nome     : <span class="tkw">caractere</span>   <span class="cm">// guarda texto</span>
+   idade    : <span class="tkw">inteiro</span>     <span class="cm">// guarda número inteiro</span>
+   altura   : <span class="tkw">real</span>        <span class="cm">// guarda número decimal</span>
+   aprovado : <span class="tkw">logico</span>      <span class="cm">// guarda verdadeiro/falso</span>
+
+<span class="pt">inicio</span>
+   <span class="cm">// ② Atribuindo valores (sinal &lt;-)</span>
+   nome     <span class="op">&lt;-</span> <span class="str">"Ana"</span>
+   idade    <span class="op">&lt;-</span> <span class="num">20</span>
+   altura   <span class="op">&lt;-</span> <span class="num">1.68</span>
+   aprovado <span class="op">&lt;-</span> <span class="pt">verdadeiro</span>
+
+   <span class="cm">// ③ Exibindo os valores</span>
+   <span class="fn">escreva</span>(<span class="str">"Nome: "</span>, nome)
+   <span class="fn">escreva</span>(<span class="str">"Idade: "</span>, idade)
+   <span class="fn">escreva</span>(<span class="str">"Aprovado: "</span>, aprovado)
+<span class="pt">fimalgoritmo</span></pre>
+        </div>
+        <div class="annotation-list">
+          <div class="ann-item">
+            <div class="ann-num">①</div>
+            <div class="ann-text"><strong>var</strong> é onde você lista todas as variáveis. Cada uma tem um <strong>nome</strong> e um <strong>tipo</strong> separados por dois-pontos.</div>
+          </div>
+          <div class="ann-item">
+            <div class="ann-num">②</div>
+            <div class="ann-text">O símbolo <strong>&lt;-</strong> é a <strong>atribuição</strong>. Lê-se "recebe". Ex: <code>nome &lt;- "Ana"</code> significa: a variável nome recebe o valor Ana.</div>
+          </div>
+          <div class="ann-item">
+            <div class="ann-num">③</div>
+            <div class="ann-text"><strong>escreva()</strong> exibe algo na tela. É o famoso "print" do Portugol.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tip-box green reveal">
+        <div class="tip-icon">✅</div>
+        <div class="tip-content">
+          <strong>Os 4 tipos de dados do Portugol:</strong>
+          <span class="inline-code">inteiro</span> — números sem vírgula (1, 42, -7) &nbsp;·&nbsp;
+          <span class="inline-code">real</span> — com vírgula (3.14, 1.68) &nbsp;·&nbsp;
+          <span class="inline-code">caractere</span> — texto ("Olá") &nbsp;·&nbsp;
+          <span class="inline-code">logico</span> — verdadeiro ou falso
+        </div>
+      </div>
+
+      <!-- DECISÃO -->
+      <div class="divider reveal"><span>🔀 Estruturas de Decisão</span></div>
+
+      <div class="balloon-wrap reveal">
+        <div class="balloon-avatar blue">💻</div>
+        <div class="balloon blue">
+          <div class="balloon-name blue">Conceito</div>
+          Decisões são o <strong>coração</strong> de qualquer algoritmo. Sem elas, o programa faz a mesma coisa sempre. Com elas, ele <span class="hl-blue">reage a diferentes situações</span>. Usamos <code>se ... entao ... senao</code> em Portugol.
+        </div>
+      </div>
+
+      <div class="annotated reveal">
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+            <span class="code-lang portugol">Portugol — Se / Então / Senão</span>
+          </div>
+          <pre><span class="pt">algoritmo</span> <span class="str">"VerificaAprovacao"</span>
+<span class="pt">var</span>
+   nota : <span class="tkw">real</span>
+
+<span class="pt">inicio</span>
+   <span class="fn">escreva</span>(<span class="str">"Digite sua nota: "</span>)
+   <span class="fn">leia</span>(nota)   <span class="cm">// ① captura o que o usuário digita</span>
+
+   <span class="pt">se</span> (nota <span class="op">&gt;=</span> <span class="num">7.0</span>) <span class="pt">entao</span>           <span class="cm">// ②</span>
+      <span class="fn">escreva</span>(<span class="str">"✅ Aprovado! Nota: "</span>, nota)
+   <span class="pt">senao</span>
+      <span class="pt">se</span> (nota <span class="op">&gt;=</span> <span class="num">5.0</span>) <span class="pt">entao</span>         <span class="cm">// ③ se aninhado</span>
+         <span class="fn">escreva</span>(<span class="str">"⚠️ Recuperação: "</span>, nota)
+      <span class="pt">senao</span>
+         <span class="fn">escreva</span>(<span class="str">"❌ Reprovado: "</span>, nota)
+      <span class="pt">fimse</span>
+   <span class="pt">fimse</span>
+<span class="pt">fimalgoritmo</span></pre>
+        </div>
+        <div class="annotation-list">
+          <div class="ann-item">
+            <div class="ann-num">①</div>
+            <div class="ann-text"><strong>leia()</strong> é o oposto de escreva. Ele <strong>espera o usuário digitar</strong> e guarda o valor na variável.</div>
+          </div>
+          <div class="ann-item">
+            <div class="ann-num">②</div>
+            <div class="ann-text">Todo <code>se...entao</code> precisa terminar com <strong>fimse</strong>. É como fechar um parêntese — obrigatório!</div>
+          </div>
+          <div class="ann-item">
+            <div class="ann-num">③</div>
+            <div class="ann-text">Você pode colocar um <code>se</code> dentro de outro — isso é <strong>se aninhado</strong>. Use com moderação para não perder a legibilidade.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPETIÇÃO -->
+      <div class="divider reveal"><span>🔁 Estruturas de Repetição</span></div>
+
+      <div class="balloon-wrap reveal">
+        <div class="balloon-avatar">🤖</div>
+        <div class="balloon">
+          <div class="balloon-name green">AlgoMaster</div>
+          Computadores são ótimos em fazer a mesma coisa <span class="hl-yellow">muitas vezes sem reclamar</span>. As estruturas de repetição — chamadas de <strong>laços</strong> ou <strong>loops</strong> — são o que permite isso. Portugol tem três: <code>enquanto</code>, <code>para</code> e <code>repita...ate</code>.
+        </div>
+      </div>
+
+      <div class="annotated reveal">
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+            <span class="code-lang portugol">Portugol — Os 3 Laços</span>
+          </div>
+          <pre><span class="pt">algoritmo</span> <span class="str">"ExemploLacos"</span>
+<span class="pt">var</span>
+   i, soma : <span class="tkw">inteiro</span>
+
+<span class="pt">inicio</span>
+   <span class="cm">// ① PARA — quando você sabe quantas vezes vai repetir</span>
+   <span class="pt">para</span> i <span class="op">&lt;-</span> <span class="num">1</span> <span class="pt">ate</span> <span class="num">5</span> <span class="pt">faca</span>
+      <span class="fn">escreva</span>(<span class="str">"Contando: "</span>, i)
+   <span class="pt">fimpara</span>
+
+   <span class="cm">// ② ENQUANTO — testa a condição ANTES de executar</span>
+   soma <span class="op">&lt;-</span> <span class="num">0</span>
+   i    <span class="op">&lt;-</span> <span class="num">1</span>
+   <span class="pt">enquanto</span> (i <span class="op">&lt;=</span> <span class="num">10</span>) <span class="pt">faca</span>
+      soma <span class="op">&lt;-</span> soma <span class="op">+</span> i
+      i    <span class="op">&lt;-</span> i <span class="op">+</span> <span class="num">1</span>
+   <span class="pt">fimenquanto</span>
+   <span class="fn">escreva</span>(<span class="str">"Soma de 1 a 10: "</span>, soma)  <span class="cm">// → 55</span>
+
+   <span class="cm">// ③ REPITA...ATÉ — executa pelo menos 1 vez, testa DEPOIS</span>
+   <span class="pt">repita</span>
+      <span class="fn">escreva</span>(<span class="str">"Digite um número positivo: "</span>)
+      <span class="fn">leia</span>(i)
+   <span class="pt">ate</span> (i <span class="op">&gt;</span> <span class="num">0</span>)
+<span class="pt">fimalgoritmo</span></pre>
+        </div>
+        <div class="annotation-list">
+          <div class="ann-item">
+            <div class="ann-num">①</div>
+            <div class="ann-text"><strong>para...ate...faca</strong> — ideal quando você <strong>sabe o número de repetições</strong>. Equivale ao <code>for</code> de outras linguagens.</div>
+          </div>
+          <div class="ann-item">
+            <div class="ann-num">②</div>
+            <div class="ann-text"><strong>enquanto...faca</strong> — testa a condição <strong>antes</strong>. Se já for falsa no início, o bloco nunca executa.</div>
+          </div>
+          <div class="ann-item">
+            <div class="ann-num">③</div>
+            <div class="ann-text"><strong>repita...ate</strong> — testa a condição <strong>depois</strong>. O bloco executa <strong>pelo menos uma vez</strong>. Ótimo para validar entradas do usuário.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tip-box red reveal">
+        <div class="tip-icon">⚠️</div>
+        <div class="tip-content">
+          <strong>Cuidado com o Loop Infinito!</strong>
+          Se a condição do <code>enquanto</code> nunca se tornar falsa, o programa trava para sempre. Sempre certifique-se de que a variável de controle está sendo atualizada dentro do laço!
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXEMPLOS DE ALGORITMOS -->
+  <section id="exemplos" style="background:var(--bg2)">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-tag">Na Prática</p>
+        <h2 class="section-title">Algoritmos em Portugol</h2>
+        <p class="section-subtitle">Exemplos comentados dos algoritmos mais importantes — primeiro em Portugol para entender a lógica, depois em Python como referência de linguagem real.</p>
+      </div>
+
+      <!-- BUBBLE SORT -->
+      <div class="divider reveal"><span>🔀 Ordenação — Bubble Sort</span></div>
+
+      <div class="balloon-wrap reveal">
+        <div class="balloon-avatar purple">🧩</div>
+        <div class="balloon purple">
+          <div class="balloon-name purple">Conceito</div>
+          O <strong>Bubble Sort</strong> compara dois elementos vizinhos e os troca se estiverem fora de ordem. Ele faz isso várias vezes até tudo estar certo, e o maior valor vai "subindo" como uma <span class="hl-purple">bolha na água</span> até o final da lista.
+        </div>
+      </div>
+
+      <div class="tabs reveal" data-tabgroup="bubble">
+        <button class="tab-btn active" onclick="showTab('bubble_pt',this,'bubble')">🇧🇷 Portugol</button>
+        <button class="tab-btn py" onclick="showTab('bubble_py',this,'bubble')">🐍 Python (referência)</button>
+      </div>
+      <div id="tab-bubble_pt" class="code-panel active" data-tabgroup="bubble">
+        <div class="code-block" style="border-top:none;border-radius:0 0 4px 4px">
+          <div class="code-header">
+            <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+            <span class="code-lang portugol">Portugol — Bubble Sort · O(n²)</span>
+          </div>
+          <pre><span class="pt">algoritmo</span> <span class="str">"BubbleSort"</span>
+<span class="pt">var</span>
+   vet       : <span class="tkw">vetor</span>[<span class="num">1</span>..<span class="num">5</span>] <span class="pt">de</span> <span class="tkw">inteiro</span>
+   i, j, aux : <span class="tkw">inteiro</span>
+
+<span class="pt">inicio</span>
+   <span class="cm">// Preenchendo o vetor com entradas do usuário</span>
+   <span class="pt">para</span> i <span class="op">&lt;-</span> <span class="num">1</span> <span class="pt">ate</span> <span class="num">5</span> <span class="pt">faca</span>
+      <span class="fn">escreva</span>(<span class="str">"Digite o "</span>, i, <span class="str">"º número: "</span>)
+      <span class="fn">leia</span>(vet[i])
+   <span class="pt">fimpara</span>
+
+   <span class="cm">// ① Laço externo: número de passagens</span>
+   <span class="pt">para</span> i <span class="op">&lt;-</span> <span class="num">1</span> <span class="pt">ate</span> <span class="num">4</span> <span class="pt">faca</span>
+      <span class="cm">// ② Laço interno: compara pares vizinhos</span>
+      <span class="pt">para</span> j <span class="op">&lt;-</span> <span class="num">1</span> <span class="pt">ate</span> <span class="num">5</span> <span class="op">-</span> i <span class="pt">faca</span>
+         <span class="pt">se</span> (vet[j] <span class="op">&gt;</span> vet[j<span class="op">+</span><span class="num">1</span>]) <span class="pt">entao</span>
+            <span class="cm">// ③ Troca usando variável auxiliar</span>
+            aux        <span class="op">&lt;-</span> vet[j]
+            vet[j]     <span class="op">&lt;-</span> vet[j<span class="op">+</span><span class="num">1</span>]
+            vet[j<span class="op">+</span><span class="num">1</span>]   <span class="op">&lt;-</span> aux
+         <span class="pt">fimse</span>
+      <span class="pt">fimpara</span>
+   <span class="pt">fimpara</span>
+
+   <span class="fn">escreva</span>(<span class="str">"Vetor ordenado: "</span>)
+   <span class="pt">para</span> i <span class="op">&lt;-</span> <span class="num">1</span> <span class="pt">ate</span> <span class="num">5</span> <span class="pt">faca</span>
+      <span class="fn">escreva</span>(vet[i], <span class="str">" "</span>)
+   <span class="pt">fimpara</span>
+<span class="pt">fimalgoritmo</span></pre>
+        </div>
+      </div>
+      <div id="tab-bubble_py" class="code-panel" data-tabgroup="bubble">
+        <div class="code-block" style="border-top:none;border-radius:0 0 4px 4px">
+          <div class="code-header">
+            <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+            <span class="code-lang python">Python — mesma lógica, outra sintaxe</span>
+            <span class="code-annotation">🔍 Compare com o Portugol acima</span>
+          </div>
+          <pre><span class="cm"># A lógica é IDÊNTICA ao Portugol — só a sintaxe muda!</span>
+<span class="kw">def</span> <span class="fn">bubble_sort</span>(<span class="var">vet</span>):
+    <span class="var">n</span> <span class="op">=</span> <span class="fn">len</span>(<span class="var">vet</span>)
+    <span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="var">n</span>):
+        <span class="kw">for</span> <span class="var">j</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="var">n</span><span class="op">-</span><span class="var">i</span><span class="op">-</span><span class="num">1</span>):
+            <span class="kw">if</span> <span class="var">vet</span>[<span class="var">j</span>] <span class="op">&gt;</span> <span class="var">vet</span>[<span class="var">j</span><span class="op">+</span><span class="num">1</span>]:
+                <span class="cm"># Python troca sem variável auxiliar!</span>
+                <span class="var">vet</span>[<span class="var">j</span>], <span class="var">vet</span>[<span class="var">j</span><span class="op">+</span><span class="num">1</span>] <span class="op">=</span> <span class="var">vet</span>[<span class="var">j</span><span class="op">+</span><span class="num">1</span>], <span class="var">vet</span>[<span class="var">j</span>]
+    <span class="kw">return</span> <span class="var">vet</span>
+
+<span class="fn">print</span>(<span class="fn">bubble_sort</span>([<span class="num">5</span>, <span class="num">2</span>, <span class="num">8</span>, <span class="num">1</span>, <span class="num">9</span>]))  <span class="cm"># → [1, 2, 5, 8, 9]</span></pre>
+        </div>
+      </div>
+
+      <!-- BUSCA BINÁRIA -->
+      <div class="divider reveal"><span>🔍 Busca Binária</span></div>
+
+      <div class="balloon-wrap reveal">
+        <div class="balloon-avatar">🤖</div>
+        <div class="balloon">
+          <div class="balloon-name green">AlgoMaster</div>
+          Imagine procurar uma palavra num dicionário. Você não lê página por página — você abre no meio, vê se está antes ou depois, e divide de novo. Isso é a <strong>Busca Binária</strong>: muito mais rápida que procurar um por um, mas <span class="hl-yellow">só funciona em listas já ordenadas!</span>
+        </div>
+      </div>
+
+      <div class="tabs reveal" data-tabgroup="busca">
+        <button class="tab-btn active" onclick="showTab('busca_pt',this,'busca')">🇧🇷 Portugol</button>
+        <button class="tab-btn py" onclick="showTab('busca_py',this,'busca')">🐍 Python (referência)</button>
+      </div>
+      <div id="tab-busca_pt" class="code-panel active" data-tabgroup="busca">
+        <div class="code-block" style="border-top:none;border-radius:0 0 4px 4px">
+          <div class="code-header">
+            <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+            <span class="code-lang portugol">Portugol — Busca Binária · O(log n)</span>
+          </div>
+          <pre><span class="pt">algoritmo</span> <span class="str">"BuscaBinaria"</span>
+<span class="pt">var</span>
+   vet            : <span class="tkw">vetor</span>[<span class="num">1</span>..<span class="num">7</span>] <span class="pt">de</span> <span class="tkw">inteiro</span>
+   alvo           : <span class="tkw">inteiro</span>
+   esq, dir, meio : <span class="tkw">inteiro</span>
+   achou          : <span class="tkw">logico</span>
+
+<span class="pt">inicio</span>
+   <span class="cm">// Vetor JÁ ordenado — obrigatório!</span>
+   vet[<span class="num">1</span>]<span class="op">&lt;-</span><span class="num">2</span>  vet[<span class="num">2</span>]<span class="op">&lt;-</span><span class="num">5</span>  vet[<span class="num">3</span>]<span class="op">&lt;-</span><span class="num">9</span>  vet[<span class="num">4</span>]<span class="op">&lt;-</span><span class="num">14</span>
+   vet[<span class="num">5</span>]<span class="op">&lt;-</span><span class="num">21</span> vet[<span class="num">6</span>]<span class="op">&lt;-</span><span class="num">37</span> vet[<span class="num">7</span>]<span class="op">&lt;-</span><span class="num">42</span>
+
+   <span class="fn">escreva</span>(<span class="str">"Qual número procurar? "</span>)
+   <span class="fn">leia</span>(alvo)
+
+   esq   <span class="op">&lt;-</span> <span class="num">1</span>
+   dir   <span class="op">&lt;-</span> <span class="num">7</span>
+   achou <span class="op">&lt;-</span> <span class="pt">falso</span>
+
+   <span class="pt">enquanto</span> (esq <span class="op">&lt;=</span> dir) <span class="op">e</span> (<span class="op">nao</span> achou) <span class="pt">faca</span>
+      meio <span class="op">&lt;-</span> (esq <span class="op">+</span> dir) <span class="op">div</span> <span class="num">2</span>    <span class="cm">// ① ponto do meio</span>
+
+      <span class="pt">se</span> (vet[meio] <span class="op">=</span> alvo) <span class="pt">entao</span>
+         achou <span class="op">&lt;-</span> <span class="pt">verdadeiro</span>          <span class="cm">// ② encontrou!</span>
+      <span class="pt">senao</span>
+         <span class="pt">se</span> (vet[meio] <span class="op">&lt;</span> alvo) <span class="pt">entao</span>
+            esq <span class="op">&lt;-</span> meio <span class="op">+</span> <span class="num">1</span>           <span class="cm">// ③ busca à direita</span>
+         <span class="pt">senao</span>
+            dir <span class="op">&lt;-</span> meio <span class="op">-</span> <span class="num">1</span>           <span class="cm">// ③ busca à esquerda</span>
+         <span class="pt">fimse</span>
+      <span class="pt">fimse</span>
+   <span class="pt">fimenquanto</span>
+
+   <span class="pt">se</span> (achou) <span class="pt">entao</span>
+      <span class="fn">escreva</span>(<span class="str">"✅ Encontrado na posição "</span>, meio)
+   <span class="pt">senao</span>
+      <span class="fn">escreva</span>(<span class="str">"❌ Número não encontrado"</span>)
+   <span class="pt">fimse</span>
+<span class="pt">fimalgoritmo</span></pre>
+        </div>
+      </div>
+      <div id="tab-busca_py" class="code-panel" data-tabgroup="busca">
+        <div class="code-block" style="border-top:none;border-radius:0 0 4px 4px">
+          <div class="code-header">
+            <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+            <span class="code-lang python">Python — Busca Binária</span>
+          </div>
+          <pre><span class="kw">def</span> <span class="fn">busca_binaria</span>(<span class="var">vet</span>, <span class="var">alvo</span>):
+    <span class="var">esq</span>, <span class="var">dir</span> <span class="op">=</span> <span class="num">0</span>, <span class="fn">len</span>(<span class="var">vet</span>) <span class="op">-</span> <span class="num">1</span>
+    <span class="kw">while</span> <span class="var">esq</span> <span class="op">&lt;=</span> <span class="var">dir</span>:
+        <span class="var">meio</span> <span class="op">=</span> (<span class="var">esq</span> <span class="op">+</span> <span class="var">dir</span>) <span class="op">//</span> <span class="num">2</span>
+        <span class="kw">if</span>   <span class="var">vet</span>[<span class="var">meio</span>] <span class="op">==</span> <span class="var">alvo</span>: <span class="kw">return</span> <span class="var">meio</span>
+        <span class="kw">elif</span> <span class="var">vet</span>[<span class="var">meio</span>] <span class="op">&lt;</span>  <span class="var">alvo</span>: <span class="var">esq</span> <span class="op">=</span> <span class="var">meio</span> <span class="op">+</span> <span class="num">1</span>
+        <span class="kw">else</span>:                    <span class="var">dir</span> <span class="op">=</span> <span class="var">meio</span> <span class="op">-</span> <span class="num">1</span>
+    <span class="kw">return</span> <span class="op">-</span><span class="num">1</span>
+
+<span class="var">lista</span> <span class="op">=</span> [<span class="num">2</span>, <span class="num">5</span>, <span class="num">9</span>, <span class="num">14</span>, <span class="num">21</span>, <span class="num">37</span>, <span class="num">42</span>]
+<span class="fn">print</span>(<span class="fn">busca_binaria</span>(<span class="var">lista</span>, <span class="num">21</span>))  <span class="cm"># → 4 (índice)</span></pre>
+        </div>
+      </div>
+
+      <div class="tip-box blue reveal">
+        <div class="tip-icon">🔍</div>
+        <div class="tip-content">
+          <strong>Por que Busca Binária é tão rápida?</strong>
+          Numa lista de 1.000 elementos, a busca linear pode precisar de até 1.000 comparações. A busca binária precisa de no máximo <strong>10</strong> (log₂ 1000 ≈ 10). Numa lista de 1 bilhão? Apenas 30 comparações!
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ERROS COMUNS -->
+  <section id="erros" style="background:var(--bg2)">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-tag">Armadilhas Clássicas</p>
+        <h2 class="section-title">Erros Comuns em Portugol</h2>
+        <p class="section-subtitle">Todo iniciante comete esses erros. Conhecê-los antes de encontrá-los poupa horas de frustração no Visualg.</p>
+      </div>
+
+      <div class="balloon-wrap reveal">
+        <div class="balloon-avatar">🤖</div>
+        <div class="balloon">
+          <div class="balloon-name green">AlgoMaster</div>
+          O Visualg vai te dar mensagens de erro nem sempre claras. Conhecer os bugs mais comuns de antemão é como ter um mapa de minas — você passa por cima sem explodir. Veja o <span class="hl-red">errado</span> ao lado do <span class="hl-yellow">certo</span> e grave a diferença.
+        </div>
+      </div>
+
+      <!-- ERRO 1 -->
+      <div class="divider reveal"><span>Erro 1 — Atribuição com = em vez de &lt;-</span></div>
+      <div class="erro-grid reveal">
+        <div class="erro-card">
+          <div class="erro-header wrong">❌ Errado</div>
+          <pre><span class="pt">inicio</span>
+   idade <span style="color:var(--red)">= 20</span>   <span class="cm">// ← isso não existe!</span>
+   <span class="fn">escreva</span>(idade)
+<span class="pt">fimalgoritmo</span></pre>
+          <div class="erro-explain">Em Portugol, <code>=</code> é só para <strong>comparação</strong> (dentro de um <code>se</code>). Para atribuir valor, sempre use <code>&lt;-</code>.</div>
+        </div>
+        <div class="erro-card">
+          <div class="erro-header right">✅ Certo</div>
+          <pre><span class="pt">inicio</span>
+   idade <span class="op">&lt;-</span> <span class="num">20</span>   <span class="cm">// "idade recebe 20"</span>
+   <span class="fn">escreva</span>(idade)
+<span class="pt">fimalgoritmo</span></pre>
+          <div class="erro-explain">Leia sempre como <strong>"recebe"</strong>: <code>idade &lt;- 20</code> = "idade recebe 20". Isso reforça o conceito de memória.</div>
+        </div>
+      </div>
+
+      <!-- ERRO 2 -->
+      <div class="divider reveal"><span>Erro 2 — Esquecer o fimse</span></div>
+      <div class="erro-grid reveal">
+        <div class="erro-card">
+          <div class="erro-header wrong">❌ Errado</div>
+          <pre><span class="pt">se</span> (nota <span class="op">&gt;=</span> <span class="num">7</span>) <span class="pt">entao</span>
+   <span class="fn">escreva</span>(<span class="str">"Aprovado"</span>)
+<span class="cm" style="color:var(--red)">// esqueceu o fimse!</span>
+<span class="fn">escreva</span>(<span class="str">"Fim"</span>)
+<span class="pt">fimalgoritmo</span></pre>
+          <div class="erro-explain">Sem o <code>fimse</code>, o Visualg não sabe onde o bloco condicional termina e gera erro de sintaxe.</div>
+        </div>
+        <div class="erro-card">
+          <div class="erro-header right">✅ Certo</div>
+          <pre><span class="pt">se</span> (nota <span class="op">&gt;=</span> <span class="num">7</span>) <span class="pt">entao</span>
+   <span class="fn">escreva</span>(<span class="str">"Aprovado"</span>)
+<span class="pt">fimse</span>   <span class="cm">// fecha o bloco se</span>
+<span class="fn">escreva</span>(<span class="str">"Fim"</span>)
+<span class="pt">fimalgoritmo</span></pre>
+          <div class="erro-explain">Cada <code>se</code> precisa de um <code>fimse</code>. Cada <code>enquanto</code> precisa de <code>fimenquanto</code>. Cada <code>para</code> precisa de <code>fimpara</code>. É sempre um par.</div>
+        </div>
+      </div>
+
+      <!-- ERRO 3 -->
+      <div class="divider reveal"><span>Erro 3 — Usar variável sem declarar</span></div>
+      <div class="erro-grid reveal">
+        <div class="erro-card">
+          <div class="erro-header wrong">❌ Errado</div>
+          <pre><span class="pt">algoritmo</span> <span class="str">"Teste"</span>
+<span class="cm" style="color:var(--red)">// bloco var ausente!</span>
+<span class="pt">inicio</span>
+   soma <span class="op">&lt;-</span> <span class="num">10</span>   <span class="cm">// erro: soma não existe</span>
+   <span class="fn">escreva</span>(soma)
+<span class="pt">fimalgoritmo</span></pre>
+          <div class="erro-explain">Portugol é uma linguagem de <strong>tipagem estática</strong>. Toda variável deve ser declarada no bloco <code>var</code> com seu tipo antes de ser usada.</div>
+        </div>
+        <div class="erro-card">
+          <div class="erro-header right">✅ Certo</div>
+          <pre><span class="pt">algoritmo</span> <span class="str">"Teste"</span>
+<span class="pt">var</span>
+   soma : <span class="tkw">inteiro</span>   <span class="cm">// declarada aqui</span>
+<span class="pt">inicio</span>
+   soma <span class="op">&lt;-</span> <span class="num">10</span>
+   <span class="fn">escreva</span>(soma)   <span class="cm">// → 10</span>
+<span class="pt">fimalgoritmo</span></pre>
+          <div class="erro-explain">A seção <code>var</code> fica sempre entre o nome do algoritmo e o <code>inicio</code>. Pense nela como a "lista de caixas" que você vai usar.</div>
+        </div>
+      </div>
+
+      <!-- ERRO 4 -->
+      <div class="divider reveal"><span>Erro 4 — Loop infinito por não incrementar o contador</span></div>
+      <div class="erro-grid reveal">
+        <div class="erro-card">
+          <div class="erro-header wrong">❌ Errado (loop infinito!)</div>
+          <pre><span class="pt">var</span>
+   i : <span class="tkw">inteiro</span>
+<span class="pt">inicio</span>
+   i <span class="op">&lt;-</span> <span class="num">1</span>
+   <span class="pt">enquanto</span> (i <span class="op">&lt;=</span> <span class="num">5</span>) <span class="pt">faca</span>
+      <span class="fn">escreva</span>(i)
+      <span class="cm" style="color:var(--red)">// i nunca muda → trava!</span>
+   <span class="pt">fimenquanto</span>
+<span class="pt">fimalgoritmo</span></pre>
+          <div class="erro-explain">Se a condição nunca se tornar falsa, o laço roda para sempre. O Visualg trava e você precisa forçar parada.</div>
+        </div>
+        <div class="erro-card">
+          <div class="erro-header right">✅ Certo</div>
+          <pre><span class="pt">var</span>
+   i : <span class="tkw">inteiro</span>
+<span class="pt">inicio</span>
+   i <span class="op">&lt;-</span> <span class="num">1</span>
+   <span class="pt">enquanto</span> (i <span class="op">&lt;=</span> <span class="num">5</span>) <span class="pt">faca</span>
+      <span class="fn">escreva</span>(i)
+      i <span class="op">&lt;-</span> i <span class="op">+</span> <span class="num">1</span>   <span class="cm">// incrementa!</span>
+   <span class="pt">fimenquanto</span>
+<span class="pt">fimalgoritmo</span></pre>
+          <div class="erro-explain">Sempre verifique: algo dentro do laço deve <strong>aproximar a condição do falso</strong>. Normalmente é um incremento ou decremento.</div>
+        </div>
+      </div>
+
+      <!-- ERRO 5 -->
+      <div class="divider reveal"><span>Erro 5 — Confundir leia() e escreva()</span></div>
+      <div class="erro-grid reveal">
+        <div class="erro-card">
+          <div class="erro-header wrong">❌ Errado</div>
+          <pre><span class="pt">var</span>
+   nome : <span class="tkw">caractere</span>
+<span class="pt">inicio</span>
+   <span class="cm" style="color:var(--red)">// invertido!</span>
+   <span class="fn">leia</span>(<span class="str">"Qual seu nome? "</span>)
+   <span class="fn">escreva</span>(nome)
+<span class="pt">fimalgoritmo</span></pre>
+          <div class="erro-explain"><code>leia()</code> recebe valores do teclado — não aceita texto fixo. <code>escreva()</code> exibe na tela — não lê entrada.</div>
+        </div>
+        <div class="erro-card">
+          <div class="erro-header right">✅ Certo</div>
+          <pre><span class="pt">var</span>
+   nome : <span class="tkw">caractere</span>
+<span class="pt">inicio</span>
+   <span class="fn">escreva</span>(<span class="str">"Qual seu nome? "</span>)
+   <span class="fn">leia</span>(nome)   <span class="cm">// recebe do teclado</span>
+   <span class="fn">escreva</span>(<span class="str">"Olá, "</span>, nome)
+<span class="pt">fimalgoritmo</span></pre>
+          <div class="erro-explain">O padrão é sempre: <strong>escreva(pergunta) → leia(variável)</strong>. Primeiro você orienta o usuário, depois coleta a resposta dele.</div>
+        </div>
+      </div>
+
+      <div class="tip-box yellow reveal" style="margin-top:2rem;">
+        <div class="tip-icon">💡</div>
+        <div class="tip-content">
+          <strong>Dica de ouro:</strong> Sempre que o Visualg travar ou der erro, cheque nessa ordem: (1) todas as variáveis estão declaradas? (2) todos os <code>se/enquanto/para</code> têm seu fecho? (3) o laço tem incremento? Resolve 90% dos problemas.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXERCÍCIOS -->
+  <section id="exercicios">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-tag">Hora de Praticar</p>
+        <h2 class="section-title">Exercícios</h2>
+        <p class="section-subtitle">O professor mandava escrever à mão — aqui você faz o mesmo. Tente resolver cada exercício no papel ou no Visualg antes de ver a dica ou o gabarito.</p>
+      </div>
+
+      <div class="balloon-wrap reveal">
+        <div class="balloon-avatar yellow">🎓</div>
+        <div class="balloon yellow">
+          <div class="balloon-name yellow">Prof. Guanabara diria:</div>
+          Não pule para o gabarito! O aprendizado acontece no <strong>momento do esforço</strong>, não na leitura da resposta. Lute com o problema por pelo menos 10 minutos antes de pedir ajuda.
+        </div>
+      </div>
+
+      <!-- EX 1 -->
+      <div class="ex-card reveal">
+        <div class="ex-header">
+          <div class="ex-num easy">1</div>
+          <div class="ex-title">Calculadora de Média</div>
+          <span class="ex-level easy">Iniciante</span>
+        </div>
+        <div class="ex-body">
+          <div class="ex-enunciado">
+            Crie um algoritmo em Portugol que:<br>
+            • Leia <strong>3 notas</strong> de um aluno (variáveis n1, n2, n3 do tipo <code>real</code>)<br>
+            • Calcule a <strong>média aritmética</strong><br>
+            • Exiba a média e informe se o aluno está <strong>Aprovado</strong> (média ≥ 7), em <strong>Recuperação</strong> (média ≥ 5) ou <strong>Reprovado</strong>
+          </div>
+          <div class="ex-toggle">
+            <button class="btn-toggle" onclick="toggleEx('ex1-hint', this)">💡 Ver dica</button>
+            <button class="btn-toggle" onclick="toggleEx('ex1-gab', this)">📋 Ver gabarito</button>
+          </div>
+          <div class="ex-hint" id="ex1-hint">
+            <div class="ex-hint-inner">
+              <strong>Dica:</strong> A média é <code>(n1 + n2 + n3) / 3</code>. Declare uma variável <code>media : real</code> para guardar o resultado. Depois use <code>se ... senao ... se ... fimse</code> aninhado para as 3 condições.
+            </div>
+          </div>
+          <div class="ex-gabarito" id="ex1-gab">
+            <div class="code-block" style="margin-top:0">
+              <div class="code-header">
+                <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+                <span class="code-lang portugol">Gabarito — Calculadora de Média</span>
+              </div>
+              <pre><span class="pt">algoritmo</span> <span class="str">"MediaAluno"</span>
+<span class="pt">var</span>
+   n1, n2, n3, media : <span class="tkw">real</span>
+
+<span class="pt">inicio</span>
+   <span class="fn">escreva</span>(<span class="str">"Digite a 1ª nota: "</span>)  <span class="fn">leia</span>(n1)
+   <span class="fn">escreva</span>(<span class="str">"Digite a 2ª nota: "</span>)  <span class="fn">leia</span>(n2)
+   <span class="fn">escreva</span>(<span class="str">"Digite a 3ª nota: "</span>)  <span class="fn">leia</span>(n3)
+
+   media <span class="op">&lt;-</span> (n1 <span class="op">+</span> n2 <span class="op">+</span> n3) <span class="op">/</span> <span class="num">3</span>
+   <span class="fn">escreva</span>(<span class="str">"Média: "</span>, media)
+
+   <span class="pt">se</span> (media <span class="op">&gt;=</span> <span class="num">7</span>) <span class="pt">entao</span>
+      <span class="fn">escreva</span>(<span class="str">"✅ Aprovado"</span>)
+   <span class="pt">senao</span>
+      <span class="pt">se</span> (media <span class="op">&gt;=</span> <span class="num">5</span>) <span class="pt">entao</span>
+         <span class="fn">escreva</span>(<span class="str">"⚠️ Recuperação"</span>)
+      <span class="pt">senao</span>
+         <span class="fn">escreva</span>(<span class="str">"❌ Reprovado"</span>)
+      <span class="pt">fimse</span>
+   <span class="pt">fimse</span>
+<span class="pt">fimalgoritmo</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EX 2 -->
+      <div class="ex-card reveal">
+        <div class="ex-header">
+          <div class="ex-num easy">2</div>
+          <div class="ex-title">Tabuada Personalizada</div>
+          <span class="ex-level easy">Iniciante</span>
+        </div>
+        <div class="ex-body">
+          <div class="ex-enunciado">
+            Crie um algoritmo que:<br>
+            • Leia um número inteiro digitado pelo usuário<br>
+            • Exiba a <strong>tabuada completa</strong> desse número (de 1 a 10)<br>
+            • O formato de saída deve ser: <code>5 x 1 = 5</code>, <code>5 x 2 = 10</code>, etc.
+          </div>
+          <div class="ex-toggle">
+            <button class="btn-toggle" onclick="toggleEx('ex2-hint', this)">💡 Ver dica</button>
+            <button class="btn-toggle" onclick="toggleEx('ex2-gab', this)">📋 Ver gabarito</button>
+          </div>
+          <div class="ex-hint" id="ex2-hint">
+            <div class="ex-hint-inner">
+              <strong>Dica:</strong> Use um laço <code>para i &lt;- 1 ate 10 faca</code>. Dentro do laço, calcule o resultado com <code>resultado &lt;- num * i</code> e use <code>escreval()</code> (com L) para pular linha a cada iteração.
+            </div>
+          </div>
+          <div class="ex-gabarito" id="ex2-gab">
+            <div class="code-block" style="margin-top:0">
+              <div class="code-header">
+                <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+                <span class="code-lang portugol">Gabarito — Tabuada</span>
+              </div>
+              <pre><span class="pt">algoritmo</span> <span class="str">"Tabuada"</span>
+<span class="pt">var</span>
+   num, i, resultado : <span class="tkw">inteiro</span>
+
+<span class="pt">inicio</span>
+   <span class="fn">escreva</span>(<span class="str">"Digite um número: "</span>)
+   <span class="fn">leia</span>(num)
+
+   <span class="fn">escreval</span>(<span class="str">"--- Tabuada do "</span>, num, <span class="str">" ---"</span>)
+
+   <span class="pt">para</span> i <span class="op">&lt;-</span> <span class="num">1</span> <span class="pt">ate</span> <span class="num">10</span> <span class="pt">faca</span>
+      resultado <span class="op">&lt;-</span> num <span class="op">*</span> i
+      <span class="fn">escreval</span>(num, <span class="str">" x "</span>, i, <span class="str">" = "</span>, resultado)
+   <span class="pt">fimpara</span>
+<span class="pt">fimalgoritmo</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EX 3 -->
+      <div class="ex-card reveal">
+        <div class="ex-header">
+          <div class="ex-num medium">3</div>
+          <div class="ex-title">Contador de Pares e Ímpares</div>
+          <span class="ex-level medium">Intermediário</span>
+        </div>
+        <div class="ex-body">
+          <div class="ex-enunciado">
+            Crie um algoritmo que:<br>
+            • Leia <strong>10 números inteiros</strong> digitados pelo usuário (use um laço)<br>
+            • Conte quantos são <strong>pares</strong> e quantos são <strong>ímpares</strong><br>
+            • Exiba os totais ao final<br>
+            <em style="color:var(--text-dim);font-size:0.85rem;">Dica de contexto: um número é par se o resto da divisão por 2 for zero. Em Portugol, o operador de resto é <code>mod</code>.</em>
+          </div>
+          <div class="ex-toggle">
+            <button class="btn-toggle" onclick="toggleEx('ex3-hint', this)">💡 Ver dica</button>
+            <button class="btn-toggle" onclick="toggleEx('ex3-gab', this)">📋 Ver gabarito</button>
+          </div>
+          <div class="ex-hint" id="ex3-hint">
+            <div class="ex-hint-inner">
+              <strong>Dica:</strong> Declare <code>pares, impares, num, i : inteiro</code>. Inicialize pares e impares com 0. No laço <code>para i &lt;- 1 ate 10</code>, leia o número e teste: <code>se (num mod 2 = 0)</code> incremente pares, senão incremente ímpares.
+            </div>
+          </div>
+          <div class="ex-gabarito" id="ex3-gab">
+            <div class="code-block" style="margin-top:0">
+              <div class="code-header">
+                <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+                <span class="code-lang portugol">Gabarito — Pares e Ímpares</span>
+              </div>
+              <pre><span class="pt">algoritmo</span> <span class="str">"ParesImpares"</span>
+<span class="pt">var</span>
+   num, i, pares, impares : <span class="tkw">inteiro</span>
+
+<span class="pt">inicio</span>
+   pares   <span class="op">&lt;-</span> <span class="num">0</span>
+   impares <span class="op">&lt;-</span> <span class="num">0</span>
+
+   <span class="pt">para</span> i <span class="op">&lt;-</span> <span class="num">1</span> <span class="pt">ate</span> <span class="num">10</span> <span class="pt">faca</span>
+      <span class="fn">escreva</span>(<span class="str">"Digite o "</span>, i, <span class="str">"º número: "</span>)
+      <span class="fn">leia</span>(num)
+
+      <span class="pt">se</span> (num <span class="op">mod</span> <span class="num">2</span> <span class="op">=</span> <span class="num">0</span>) <span class="pt">entao</span>
+         pares <span class="op">&lt;-</span> pares <span class="op">+</span> <span class="num">1</span>
+      <span class="pt">senao</span>
+         impares <span class="op">&lt;-</span> impares <span class="op">+</span> <span class="num">1</span>
+      <span class="pt">fimse</span>
+   <span class="pt">fimpara</span>
+
+   <span class="fn">escreval</span>(<span class="str">"Pares:   "</span>, pares)
+   <span class="fn">escreval</span>(<span class="str">"Ímpares: "</span>, impares)
+<span class="pt">fimalgoritmo</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EX 4 -->
+      <div class="ex-card reveal">
+        <div class="ex-header">
+          <div class="ex-num medium">4</div>
+          <div class="ex-title">Maior e Menor de uma Sequência</div>
+          <span class="ex-level medium">Intermediário</span>
+        </div>
+        <div class="ex-body">
+          <div class="ex-enunciado">
+            Crie um algoritmo que:<br>
+            • Leia <strong>5 números reais</strong><br>
+            • Encontre e exiba o <strong>maior</strong> e o <strong>menor</strong> valor digitado<br>
+            <em style="color:var(--text-dim);font-size:0.85rem;">Desafio extra: tente também calcular a soma e a média dos 5 números.</em>
+          </div>
+          <div class="ex-toggle">
+            <button class="btn-toggle" onclick="toggleEx('ex4-hint', this)">💡 Ver dica</button>
+            <button class="btn-toggle" onclick="toggleEx('ex4-gab', this)">📋 Ver gabarito</button>
+          </div>
+          <div class="ex-hint" id="ex4-hint">
+            <div class="ex-hint-inner">
+              <strong>Dica:</strong> Leia o primeiro número antes do laço e use-o para inicializar tanto <code>maior</code> quanto <code>menor</code>. No laço, leia os 4 restantes comparando com <code>se (num &gt; maior)</code> e <code>se (num &lt; menor)</code>.
+            </div>
+          </div>
+          <div class="ex-gabarito" id="ex4-gab">
+            <div class="code-block" style="margin-top:0">
+              <div class="code-header">
+                <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+                <span class="code-lang portugol">Gabarito — Maior e Menor</span>
+              </div>
+              <pre><span class="pt">algoritmo</span> <span class="str">"MaiorMenor"</span>
+<span class="pt">var</span>
+   num, maior, menor, soma : <span class="tkw">real</span>
+   i : <span class="tkw">inteiro</span>
+
+<span class="pt">inicio</span>
+   <span class="fn">escreva</span>(<span class="str">"1º número: "</span>)
+   <span class="fn">leia</span>(num)
+   maior <span class="op">&lt;-</span> num   <span class="cm">// assume o 1º como base</span>
+   menor <span class="op">&lt;-</span> num
+   soma  <span class="op">&lt;-</span> num
+
+   <span class="pt">para</span> i <span class="op">&lt;-</span> <span class="num">2</span> <span class="pt">ate</span> <span class="num">5</span> <span class="pt">faca</span>
+      <span class="fn">escreva</span>(i, <span class="str">"º número: "</span>)
+      <span class="fn">leia</span>(num)
+      soma <span class="op">&lt;-</span> soma <span class="op">+</span> num
+
+      <span class="pt">se</span> (num <span class="op">&gt;</span> maior) <span class="pt">entao</span>
+         maior <span class="op">&lt;-</span> num
+      <span class="pt">fimse</span>
+      <span class="pt">se</span> (num <span class="op">&lt;</span> menor) <span class="pt">entao</span>
+         menor <span class="op">&lt;-</span> num
+      <span class="pt">fimse</span>
+   <span class="pt">fimpara</span>
+
+   <span class="fn">escreval</span>(<span class="str">"Maior: "</span>, maior)
+   <span class="fn">escreval</span>(<span class="str">"Menor: "</span>, menor)
+   <span class="fn">escreval</span>(<span class="str">"Média: "</span>, soma <span class="op">/</span> <span class="num">5</span>)
+<span class="pt">fimalgoritmo</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EX 5 -->
+      <div class="ex-card reveal">
+        <div class="ex-header">
+          <div class="ex-num hard">5</div>
+          <div class="ex-title">Verificador de Número Primo</div>
+          <span class="ex-level hard">Avançado</span>
+        </div>
+        <div class="ex-body">
+          <div class="ex-enunciado">
+            Crie um algoritmo que:<br>
+            • Leia um número inteiro positivo<br>
+            • Determine se ele é <strong>primo</strong> ou não<br>
+            • Exiba a resposta com uma mensagem clara<br>
+            <em style="color:var(--text-dim);font-size:0.85rem;">Lembre: um número primo só é divisível por 1 e por ele mesmo. 1 não é primo.</em>
+          </div>
+          <div class="ex-toggle">
+            <button class="btn-toggle" onclick="toggleEx('ex5-hint', this)">💡 Ver dica</button>
+            <button class="btn-toggle" onclick="toggleEx('ex5-gab', this)">📋 Ver gabarito</button>
+          </div>
+          <div class="ex-hint" id="ex5-hint">
+            <div class="ex-hint-inner">
+              <strong>Dica:</strong> Use uma variável <code>primo : logico</code> iniciada como <code>verdadeiro</code>. Faça um laço de <code>i &lt;- 2 ate num-1</code>: se <code>num mod i = 0</code>, defina <code>primo &lt;- falso</code>. Ao final, teste <code>se (primo e num &gt; 1)</code>.
+            </div>
+          </div>
+          <div class="ex-gabarito" id="ex5-gab">
+            <div class="code-block" style="margin-top:0">
+              <div class="code-header">
+                <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+                <span class="code-lang portugol">Gabarito — Número Primo</span>
+              </div>
+              <pre><span class="pt">algoritmo</span> <span class="str">"NumeroPrimo"</span>
+<span class="pt">var</span>
+   num, i : <span class="tkw">inteiro</span>
+   primo   : <span class="tkw">logico</span>
+
+<span class="pt">inicio</span>
+   <span class="fn">escreva</span>(<span class="str">"Digite um número: "</span>)
+   <span class="fn">leia</span>(num)
+
+   primo <span class="op">&lt;-</span> <span class="pt">verdadeiro</span>
+
+   <span class="pt">se</span> (num <span class="op">&lt;=</span> <span class="num">1</span>) <span class="pt">entao</span>
+      primo <span class="op">&lt;-</span> <span class="pt">falso</span>
+   <span class="pt">senao</span>
+      <span class="pt">para</span> i <span class="op">&lt;-</span> <span class="num">2</span> <span class="pt">ate</span> num <span class="op">-</span> <span class="num">1</span> <span class="pt">faca</span>
+         <span class="pt">se</span> (num <span class="op">mod</span> i <span class="op">=</span> <span class="num">0</span>) <span class="pt">entao</span>
+            primo <span class="op">&lt;-</span> <span class="pt">falso</span>
+         <span class="pt">fimse</span>
+      <span class="pt">fimpara</span>
+   <span class="pt">fimse</span>
+
+   <span class="pt">se</span> (primo) <span class="pt">entao</span>
+      <span class="fn">escreval</span>(num, <span class="str">" é primo ✅"</span>)
+   <span class="pt">senao</span>
+      <span class="fn">escreval</span>(num, <span class="str">" não é primo ❌"</span>)
+   <span class="pt">fimse</span>
+<span class="pt">fimalgoritmo</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz" style="background:var(--bg2)">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-tag">Teste seu Conhecimento</p>
+        <h2 class="section-title">Quiz de Fixação</h2>
+        <p class="section-subtitle">6 perguntas para revisar tudo que você aprendeu. Sem consulta — confie no que você sabe!</p>
+      </div>
+
+      <div class="balloon-wrap reveal">
+        <div class="balloon-avatar">🤖</div>
+        <div class="balloon">
+          <div class="balloon-name green">AlgoMaster</div>
+          Cada pergunta tem um feedback explicando <strong>por que</strong> a resposta está certa ou errada. O objetivo não é a pontuação — é a compreensão.
+        </div>
+      </div>
+
+      <div class="quiz-wrap reveal">
+        <div id="quiz-container">
+          <div class="quiz-progress" id="quiz-progress"></div>
+          <div id="quiz-body"></div>
+          <div class="quiz-feedback" id="quiz-feedback"></div>
+          <div class="quiz-nav">
+            <button class="btn-quiz-next" id="btn-next" onclick="quizNext()">Próxima →</button>
+          </div>
+        </div>
+        <div class="quiz-result" id="quiz-result">
+          <div class="quiz-score" id="quiz-score-val"></div>
+          <div class="quiz-score-label">de 6 acertos</div>
+          <div class="quiz-msg" id="quiz-msg"></div>
+          <button class="btn-quiz-restart" onclick="quizRestart()">🔄 Refazer Quiz</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BIG O -->
+  <section id="complexidade">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-tag">Análise de Desempenho</p>
+        <h2 class="section-title">Notação Big O</h2>
+        <p class="section-subtitle">Depois de aprender a lógica em Portugol, o próximo nível é entender <strong>quão eficiente</strong> é o seu algoritmo.</p>
+      </div>
+
+      <div class="balloon-wrap reveal">
+        <div class="balloon-avatar">🤖</div>
+        <div class="balloon">
+          <div class="balloon-name green">AlgoMaster</div>
+          Big O responde à pergunta: <strong>"Se eu dobrar o tamanho da entrada, quanto mais lento fica?"</strong> Um <code>O(n)</code> dobra o tempo. Um <code>O(n²)</code> fica 4× mais lento. Um <code>O(log n)</code> quase não muda. <span class="hl-yellow">Isso importa muito no mundo real.</span>
+        </div>
+      </div>
+
+      <div class="table-wrap reveal">
+        <table>
+          <thead>
+            <tr><th>Notação</th><th>Nome</th><th>Exemplo em Portugol</th><th>n=10</th><th>n=100</th><th>n=1000</th><th>Nota</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>O(1)</code></td><td>Constante</td><td>Acessar <code>vet[3]</code></td><td>1</td><td>1</td><td>1</td><td><span class="badge badge-green">Excelente</span></td></tr>
+            <tr><td><code>O(log n)</code></td><td>Logarítmica</td><td>Busca Binária</td><td>3</td><td>7</td><td>10</td><td><span class="badge badge-green">Ótimo</span></td></tr>
+            <tr><td><code>O(n)</code></td><td>Linear</td><td>Percorrer vetor com <code>para</code></td><td>10</td><td>100</td><td>1.000</td><td><span class="badge badge-blue">Bom</span></td></tr>
+            <tr><td><code>O(n log n)</code></td><td>Linearítmica</td><td>Merge Sort</td><td>33</td><td>664</td><td>9.966</td><td><span class="badge badge-blue">Aceitável</span></td></tr>
+            <tr><td><code>O(n²)</code></td><td>Quadrática</td><td>Bubble Sort — dois <code>para</code> aninhados</td><td>100</td><td>10.000</td><td>1.000.000</td><td><span class="badge badge-yellow">Cuidado</span></td></tr>
+            <tr><td><code>O(2ⁿ)</code></td><td>Exponencial</td><td>Fibonacci recursivo ingênuo</td><td>1.024</td><td>~10³⁰</td><td>—</td><td><span class="badge badge-red">Evitar</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROADMAP -->
+  <section id="roadmap" style="background:var(--bg2)">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-tag">Trilha de Aprendizado</p>
+        <h2 class="section-title">Por onde começar?</h2>
+        <p class="section-subtitle">A trilha recomendada para ir do zero ao domínio — seguindo a filosofia do Curso em Vídeo.</p>
+      </div>
+      <div class="roadmap">
+        <div class="road-item reveal">
+          <div class="road-phase">Fase 1 · Base</div>
+          <div class="road-title">Lógica com Portugol</div>
+          <div class="road-tags"><span>Variáveis</span><span>Tipos de dados</span><span>Operadores</span><span>Escreva / Leia</span></div>
+        </div>
+        <div class="road-item reveal">
+          <div class="road-phase">Fase 2 · Decisões</div>
+          <div class="road-title">Estruturas Condicionais</div>
+          <div class="road-tags"><span>Se...entao</span><span>Senao</span><span>Escolha...caso</span><span>Se aninhado</span></div>
+        </div>
+        <div class="road-item reveal">
+          <div class="road-phase">Fase 3 · Repetição</div>
+          <div class="road-title">Laços e Iteração</div>
+          <div class="road-tags"><span>Para...ate</span><span>Enquanto</span><span>Repita...ate</span><span>Contadores</span><span>Acumuladores</span></div>
+        </div>
+        <div class="road-item reveal">
+          <div class="road-phase">Fase 4 · Estruturas</div>
+          <div class="road-title">Vetores e Matrizes</div>
+          <div class="road-tags"><span>Vetores</span><span>Matrizes</span><span>Percorrer com laços</span><span>Busca linear</span></div>
+        </div>
+        <div class="road-item reveal">
+          <div class="road-phase">Fase 5 · Algoritmos</div>
+          <div class="road-title">Ordenação e Busca</div>
+          <div class="road-tags"><span>Bubble Sort</span><span>Selection Sort</span><span>Insertion Sort</span><span>Busca Binária</span></div>
+        </div>
+        <div class="road-item reveal">
+          <div class="road-phase">Fase 6 · Linguagem Real</div>
+          <div class="road-title">Python / JavaScript</div>
+          <div class="road-tags"><span>Transcrever Portugol</span><span>Funções</span><span>Listas</span><span>Recursão</span></div>
+        </div>
+        <div class="road-item reveal">
+          <div class="road-phase">Fase 7 · Avançado</div>
+          <div class="road-title">Estruturas e Paradigmas</div>
+          <div class="road-tags"><span>Árvores</span><span>Grafos</span><span>Prog. Dinâmica</span><span>Big O na prática</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIVROS -->
+  <section id="livros">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-tag">Para se Aprofundar</p>
+        <h2 class="section-title">Livros Recomendados</h2>
+        <p class="section-subtitle">Do iniciante absoluto ao avançado — os melhores livros para cada etapa da jornada.</p>
+      </div>
+      <div class="books-grid">
+        <div class="book-card reveal">
+          <div class="book-emoji">📗</div>
+          <div class="book-level" style="color:var(--green)">Iniciante</div>
+          <div class="book-title">Entendendo Algoritmos</div>
+          <div class="book-author">Aditya Y. Bhargava</div>
+          <div class="book-desc">Introdução visual com centenas de ilustrações. Perfeito para quem está começando — aborda desde busca binária até programação dinâmica de forma leve e acessível.</div>
+        </div>
+        <div class="book-card reveal">
+          <div class="book-emoji">📙</div>
+          <div class="book-level" style="color:var(--yellow)">Iniciante / Médio</div>
+          <div class="book-title">Lógica de Programação e Algoritmos</div>
+          <div class="book-author">Edécio Fernando Iepsen</div>
+          <div class="book-desc">Focado no mercado brasileiro, usa Portugol como base. Excelente para quem quer solidificar a lógica antes de partir para uma linguagem real. Muito adotado em faculdades.</div>
+        </div>
+        <div class="book-card reveal">
+          <div class="book-emoji">📘</div>
+          <div class="book-level" style="color:var(--blue)">Médio / Avançado</div>
+          <div class="book-title">Algoritmos: Teoria e Prática (CLRS)</div>
+          <div class="book-author">Cormen, Leiserson, Rivest, Stein</div>
+          <div class="book-desc">A "bíblia" dos algoritmos. Denso e matemático — não é para iniciantes, mas é a referência definitiva da área. Todo programador sério deve conhecer.</div>
+        </div>
+        <div class="book-card reveal">
+          <div class="book-emoji">📕</div>
+          <div class="book-level" style="color:var(--red)">Médio</div>
+          <div class="book-title">The Algorithm Design Manual</div>
+          <div class="book-author">Steven S. Skiena</div>
+          <div class="book-desc">Abordagem prática com foco em resolver problemas reais. Inclui catálogo de algoritmos e casos de uso do mundo real. Ótima leitura após dominar o básico.</div>
+        </div>
+        <div class="book-card reveal">
+          <div class="book-emoji">🟣</div>
+          <div class="book-level" style="color:var(--purple)">Entrevistas</div>
+          <div class="book-title">Cracking the Coding Interview</div>
+          <div class="book-author">Gayle Laakmann McDowell</div>
+          <div class="book-desc">189 problemas com soluções detalhadas. O guia mais usado para entrevistas técnicas em grandes empresas de tecnologia. Foca em raciocínio algorítmico.</div>
+        </div>
+        <div class="book-card reveal">
+          <div class="book-emoji">🟡</div>
+          <div class="book-level" style="color:var(--yellow)">Iniciante</div>
+          <div class="book-title">Algoritmos — Unlocking the Secrets</div>
+          <div class="book-author">Thomas H. Cormen</div>
+          <div class="book-desc">Versão acessível do CLRS escrita pelo próprio Cormen. Apresenta os conceitos sem o formalismo pesado — ponte perfeita entre o básico e o livro definitivo.</div>
+        </div>
+        <div class="book-card reveal">
+          <div class="book-emoji">🟠</div>
+          <div class="book-level" style="color:var(--orange)">Médio</div>
+          <div class="book-title">Estruturas de Dados e Algoritmos com JavaScript</div>
+          <div class="book-author">Loiane Groner</div>
+          <div class="book-desc">Abordagem prática para quem já conhece o básico e quer aprender estruturas de dados usando JavaScript. Cobre listas, pilhas, filas, árvores e grafos com exemplos reais e código limpo.</div>
+        </div>
+        <div class="book-card reveal">
+          <div class="book-emoji">🔶</div>
+          <div class="book-level" style="color:var(--red)">Avançado</div>
+          <div class="book-title">Programming Pearls</div>
+          <div class="book-author">Jon Bentley</div>
+          <div class="book-desc">Um clássico sobre como pensar em problemas difíceis de forma elegante. Ensina a arte de escolher o algoritmo certo para o problema certo — leitura obrigatória para quem quer escrever código eficiente e bem pensado.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECURSOS -->
+  <section id="recursos" style="background:var(--bg2)">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-tag">Ferramentas e Plataformas</p>
+        <h2 class="section-title">Recursos Online</h2>
+        <p class="section-subtitle">Onde praticar, visualizar e evoluir — tudo gratuito.</p>
+      </div>
+      <div class="resources-grid reveal">
+        <a href="https://www.cursoemvideo.com/cursos/" target="_blank" class="resource-card">
+          <span class="resource-icon">🎓</span>
+          <div><div class="resource-name">Curso em Vídeo</div><div class="resource-desc">Algoritmos com Guanabara — gratuito</div></div>
+        </a>
+        <a href="https://visualg3.com.br" target="_blank" class="resource-card">
+          <span class="resource-icon">⚙️</span>
+          <div><div class="resource-name">Visualg 3.0</div><div class="resource-desc">IDE para executar Portugol</div></div>
+        </a>
+        <a href="https://visualgo.net" target="_blank" class="resource-card">
+          <span class="resource-icon">🎬</span>
+          <div><div class="resource-name">VisuAlgo</div><div class="resource-desc">Visualização animada de algoritmos</div></div>
+        </a>
+        <a href="https://leetcode.com" target="_blank" class="resource-card">
+          <span class="resource-icon">⚡</span>
+          <div><div class="resource-name">LeetCode</div><div class="resource-desc">Problemas práticos para evoluir</div></div>
+        </a>
+        <a href="https://neetcode.io" target="_blank" class="resource-card">
+          <span class="resource-icon">🗺️</span>
+          <div><div class="resource-name">NeetCode</div><div class="resource-desc">Roadmap estruturado de problemas</div></div>
+        </a>
+        <a href="https://www.geeksforgeeks.org" target="_blank" class="resource-card">
+          <span class="resource-icon">🌐</span>
+          <div><div class="resource-name">GeeksForGeeks</div><div class="resource-desc">Artigos e implementações detalhadas</div></div>
+        </a>
+        <a href="https://cp-algorithms.com" target="_blank" class="resource-card">
+          <span class="resource-icon">📚</span>
+          <div><div class="resource-name">CP-Algorithms</div><div class="resource-desc">Algoritmos avançados com exemplos</div></div>
+        </a>
+        <a href="https://www.hackerrank.com" target="_blank" class="resource-card">
+          <span class="resource-icon">🏆</span>
+          <div><div class="resource-name">HackerRank</div><div class="resource-desc">Desafios e certificações</div></div>
+        </a>
+        <a href="https://app.diagrams.net" target="_blank" class="resource-card">
+          <span class="resource-icon">📐</span>
+          <div><div class="resource-name">Draw.io</div><div class="resource-desc">Crie fluxogramas gratuitamente online</div></div>
+        </a>
+        <a href="https://www.canva.com/graphs/flowcharts/" target="_blank" class="resource-card">
+          <span class="resource-icon">🎨</span>
+          <div><div class="resource-name">Canva Flowcharts</div><div class="resource-desc">Fluxogramas visuais e bonitos</div></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">AlgoMaster</div>
+    <p class="footer-text">
+      Construído para estudantes que levam algoritmos a sério.<br>
+      <span style="color:var(--green)">// Do Portugol ao código — do conceito ao domínio.</span>
+    </p>
+    <div style="margin-top:2.5rem;padding-top:2rem;border-top:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:1rem;">
+      <div style="display:inline-flex;align-items:center;gap:0.6rem;border:1px solid rgba(185,124,255,0.3);background:rgba(185,124,255,0.05);padding:0.4rem 1.1rem;border-radius:100px;">
+        <span style="width:7px;height:7px;background:var(--purple);border-radius:50%;box-shadow:0 0 8px var(--purple);display:inline-block;"></span>
+        <span style="font-size:0.63rem;color:var(--purple);letter-spacing:2px;text-transform:uppercase;">Conteúdo gerado com IA</span>
+      </div>
+      <div style="max-width:560px;text-align:center;">
+        <p style="font-family:'Nunito',sans-serif;font-size:0.82rem;color:var(--text-dim);line-height:1.8;">
+          Este site foi inteiramente criado por <span style="color:var(--purple);font-weight:700;">Claude</span>, assistente de IA da <span style="color:var(--text);">Anthropic</span> — como ponto de partida para o estudo de algoritmos e uma demonstração prática do uso de <span style="color:var(--green);">Inteligência Artificial na programação</span>. Inspirado na metodologia do <span style="color:var(--yellow);font-weight:700;">Curso em Vídeo</span> do Prof. Gustavo Guanabara.
+        </p>
+      </div>
+      <div style="display:flex;align-items:center;gap:1.5rem;margin-top:0.5rem;flex-wrap:wrap;justify-content:center;">
+        <div style="text-align:center;"><div style="font-size:0.63rem;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:0.2rem;">Criado por</div><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:0.95rem;color:var(--purple);">Claude · Anthropic</div></div>
+        <div style="width:1px;height:30px;background:var(--border);"></div>
+        <div style="text-align:center;"><div style="font-size:0.63rem;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:0.2rem;">Inspirado em</div><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:0.95rem;color:var(--yellow);">Curso em Vídeo</div></div>
+        <div style="width:1px;height:30px;background:var(--border);"></div>
+        <div style="text-align:center;"><div style="font-size:0.63rem;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:0.2rem;">Finalidade</div><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:0.95rem;color:var(--green);">Educacional</div></div>
+      </div>
+      <p style="font-family:'Nunito',sans-serif;font-size:0.7rem;color:var(--text-dim);opacity:0.45;margin-top:1rem;">IA não substitui o estudo — ela acelera o início da jornada. 🚀</p>
+    </div>
+  </footer>
+
+  <script>
+    // ── SCROLL SUAVE COM PAUSE/RESUME ─────────────────────────
+    let scrollAtivo = false;
+    let scrollPausado = false;
+    let scrollPosAtual = 0;
+    let rafId = null;
+
+    const fab = document.getElementById('scroll-fab');
+
+    function fabUpdate() {
+      if (!scrollAtivo) { fab.classList.remove('visible','playing'); return; }
+      fab.classList.add('visible');
+      if (scrollPausado) {
+        fab.textContent = '▶';
+        fab.classList.remove('playing');
+      } else {
+        fab.textContent = '⏸';
+        fab.classList.add('playing');
+      }
+    }
+
+    function toggleScroll() {
+      if (!scrollAtivo) return;
+      scrollPausado = !scrollPausado;
+      fabUpdate();
+      if (!scrollPausado) continuarScroll();
+    }
+
+    function continuarScroll() {
+      if (scrollPausado || !scrollAtivo) return;
+      const velocidade = 0.6; // px por frame (~60fps = ~36px/s, bem lento)
+      function passo() {
+        if (scrollPausado || !scrollAtivo) return;
+        const max = document.body.scrollHeight - window.innerHeight;
+        scrollPosAtual += velocidade;
+        window.scrollTo(0, scrollPosAtual);
+        if (scrollPosAtual >= max) {
+          scrollAtivo = false;
+          fabUpdate();
+          return;
+        }
+        rafId = requestAnimationFrame(passo);
+      }
+      rafId = requestAnimationFrame(passo);
+    }
+
+    function scrollSuave() {
+      if (rafId) cancelAnimationFrame(rafId);
+      scrollAtivo = true;
+      scrollPausado = false;
+      scrollPosAtual = window.scrollY;
+      fabUpdate();
+      continuarScroll();
+    }
+
+    // Para o scroll se o usuário rolar manualmente
+    let userScrollTimer = null;
+    window.addEventListener('wheel', () => {
+      if (!scrollAtivo) return;
+      scrollPausado = true;
+      scrollPosAtual = window.scrollY;
+      fabUpdate();
+      clearTimeout(userScrollTimer);
+    }, { passive: true });
+
+    window.addEventListener('touchmove', () => {
+      if (!scrollAtivo) return;
+      scrollPausado = true;
+      scrollPosAtual = window.scrollY;
+      fabUpdate();
+    }, { passive: true });
+    function showTab(name, btn, group) {
+      document.querySelectorAll('[data-tabgroup="' + group + '"]').forEach(el => el.classList.remove('active'));
+      document.getElementById('tab-' + name).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // ── EXERCÍCIOS ────────────────────────────────────────────
+    function toggleEx(id, btn) {
+      const el = document.getElementById(id);
+      const isOpen = el.classList.contains('show');
+      el.classList.toggle('show', !isOpen);
+      btn.classList.toggle('open', !isOpen);
+      btn.textContent = isOpen
+        ? (id.includes('hint') ? '💡 Ver dica' : '📋 Ver gabarito')
+        : (id.includes('hint') ? '💡 Ocultar dica' : '📋 Ocultar gabarito');
+    }
+
+    // ── QUIZ ──────────────────────────────────────────────────
+    const quizData = [
+      {
+        q: 'Qual é o operador correto de atribuição em Portugol?',
+        code: null,
+        opts: ['= (igual)', '<- (seta)', ':= (dois pontos)', '== (duplo igual)'],
+        ans: 1,
+        fb: '✅ Correto! Em Portugol, <b>&lt;-</b> é a atribuição (lê-se "recebe"). O <b>=</b> é usado apenas para comparação dentro de condições como <code>se</code>.'
+      },
+      {
+        q: 'O que este código exibe na tela?',
+        code: `var\n   i : inteiro\ninicio\n   para i <- 1 ate 3 faca\n      escreva(i * 2)\n   fimpara\nfimalgoritmo`,
+        opts: ['1 2 3', '2 4 6', '2 3 4', '1 3 5'],
+        ans: 1,
+        fb: '✅ Correto! O laço percorre i = 1, 2, 3. Cada iteração exibe i * 2: 1×2=<b>2</b>, 2×2=<b>4</b>, 3×2=<b>6</b>.'
+      },
+      {
+        q: 'Qual estrutura representa um LAÇO no fluxograma?',
+        code: null,
+        opts: ['Um retângulo isolado', 'Um paralelogramo', 'Um losango com uma seta voltando para cima', 'Um oval com duas saídas'],
+        ans: 2,
+        fb: '✅ Correto! O losango (decisão) com uma seta que retorna ao ponto anterior cria o ciclo visual de um laço. A seta "volta para cima" é a marca registrada de todo loop em fluxogramas.'
+      },
+      {
+        q: 'Qual é o erro neste trecho de código?',
+        code: `inicio\n   escreva("Qual seu nome?")\n   leia("Digite aqui")   // ← problema\nfimalgoritmo`,
+        opts: [
+          'O escreva() está antes do leia()',
+          'leia() não aceita texto entre aspas — só variáveis',
+          'Falta declarar variáveis no bloco var',
+          'escreva() deveria ser escreval()'
+        ],
+        ans: 1,
+        fb: '✅ Correto! <b>leia()</b> recebe apenas nomes de variáveis, não strings entre aspas. O correto seria declarar uma variável <code>nome : caractere</code> e usar <code>leia(nome)</code>.'
+      },
+      {
+        q: 'Quantas vezes o bloco interno deste laço executa no total?',
+        code: `para i <- 1 ate 3 faca\n   para j <- 1 ate 3 faca\n      escreva("*")\n   fimpara\nfimpara`,
+        opts: ['3 vezes', '6 vezes', '9 vezes', '12 vezes'],
+        ans: 2,
+        fb: '✅ Correto! O laço externo roda 3 vezes (i=1,2,3). Para cada valor de i, o laço interno também roda 3 vezes (j=1,2,3). Total: 3 × 3 = <b>9 vezes</b>.'
+      },
+      {
+        q: 'Qual é a complexidade do Bubble Sort no pior caso?',
+        code: null,
+        opts: ['O(n)', 'O(log n)', 'O(n²)', 'O(n log n)'],
+        ans: 2,
+        fb: '✅ Correto! O Bubble Sort tem dois laços aninhados — cada elemento é comparado com todos os outros. Isso resulta em O(n²), tornando-o ineficiente para listas grandes.'
+      }
+    ];
+
+    let current = 0, score = 0, answered = false;
+
+    function quizRender() {
+      const q = quizData[current];
+      const prog = document.getElementById('quiz-progress');
+      prog.innerHTML = quizData.map((_, i) =>
+        `<div class="quiz-dot ${i < current ? 'done' : i === current ? 'active' : ''}"></div>`
+      ).join('');
+
+      const fb = document.getElementById('quiz-feedback');
+      fb.className = 'quiz-feedback';
+      fb.innerHTML = '';
+
+      const next = document.getElementById('btn-next');
+      next.className = 'btn-quiz-next';
+
+      answered = false;
+
+      let html = `<div class="quiz-question">${current + 1}. ${q.q}</div>`;
+      if (q.code) html += `<div class="quiz-code"><pre>${q.code}</pre></div>`;
+      html += `<div class="quiz-options">`;
+      q.opts.forEach((o, i) => {
+        html += `<button class="quiz-opt" onclick="quizAnswer(${i}, this)">${o}</button>`;
+      });
+      html += `</div>`;
+      document.getElementById('quiz-body').innerHTML = html;
+    }
+
+    function quizAnswer(idx, btn) {
+      if (answered) return;
+      answered = true;
+      const q = quizData[current];
+      const opts = document.querySelectorAll('.quiz-opt');
+      opts.forEach(b => b.disabled = true);
+      const fb = document.getElementById('quiz-feedback');
+      if (idx === q.ans) {
+        score++;
+        btn.classList.add('correct');
+        fb.className = 'quiz-feedback ok show';
+        fb.innerHTML = q.fb;
+      } else {
+        btn.classList.add('wrong');
+        opts[q.ans].classList.add('correct');
+        fb.className = 'quiz-feedback err show';
+        fb.innerHTML = `❌ Não exatamente. <br>${q.fb}`;
+      }
+      const next = document.getElementById('btn-next');
+      next.className = 'btn-quiz-next show';
+      next.textContent = current < quizData.length - 1 ? 'Próxima →' : 'Ver resultado';
+    }
+
+    function quizNext() {
+      current++;
+      if (current >= quizData.length) {
+        quizShowResult();
+      } else {
+        quizRender();
+      }
+    }
+
+    function quizShowResult() {
+      document.getElementById('quiz-container').style.display = 'none';
+      const result = document.getElementById('quiz-result');
+      result.className = 'quiz-result show';
+      document.getElementById('quiz-score-val').textContent = score + '/6';
+      const msgs = [
+        [0, 2, '😅 Não desanime! Releia as seções de Conceitos e Erros Comuns e tente novamente.'],
+        [3, 4, '👍 Bom progresso! Você tem uma base sólida. Revise os pontos que errou.'],
+        [5, 5, '🎯 Muito bem! Você domina o conteúdo. Pratique os exercícios para solidificar.'],
+        [6, 6, '🏆 Perfeito! Domínio completo. Você está pronto para avançar para linguagens reais!']
+      ];
+      const [,, msg] = msgs.find(([min, max]) => score >= min && score <= max);
+      document.getElementById('quiz-msg').innerHTML = msg;
+    }
+
+    function quizRestart() {
+      current = 0; score = 0;
+      document.getElementById('quiz-container').style.display = 'block';
+      document.getElementById('quiz-result').className = 'quiz-result';
+      quizRender();
+    }
+
+    // ── SCROLL REVEAL ─────────────────────────────────────────
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 50);
+        }
+      });
+    }, { threshold: 0.07 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Inicializa quiz
+    quizRender();
+  </script>
+</body>
+</html>
